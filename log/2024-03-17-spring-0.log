@@ -1,0 +1,8 @@
+2024-03-17T19:08:19.242+08:00  INFO 14700 --- [Achat] [main] com.hjong.achat.AchatApplication         : Starting AchatApplication using Java 21.0.1 with PID 14700 (C:\Users\chicr\Dev\Java\Achat\target\classes started by chicr in C:\Users\chicr\Dev\Java\Achat)
+2024-03-17T19:08:19.243+08:00  INFO 14700 --- [Achat] [main] com.hjong.achat.AchatApplication         : No active profile set, falling back to 1 default profile: "default"
+2024-03-17T19:08:19.407+08:00  INFO 14700 --- [Achat] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2024-03-17T19:08:19.411+08:00  INFO 14700 --- [Achat] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 1 ms. Found 0 R2DBC repository interfaces.
+2024-03-17T19:08:19.458+08:00  INFO 14700 --- [Achat] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2024-03-17T19:08:19.512+08:00  INFO 14700 --- [Achat] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 53 ms. Found 3 R2DBC repository interfaces.
+2024-03-17T19:08:20.048+08:00  INFO 14700 --- [Achat] [main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8080
+2024-03-17T19:08:20.051+08:00  INFO 14700 --- [Achat] [main] com.hjong.achat.AchatApplication         : Started AchatApplication in 0.956 seconds (process running for 1.272)

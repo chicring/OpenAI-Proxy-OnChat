@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: Achat
+
+  r2dbc:
+    url: r2dbc:mariadb://hk.hjong.cn:3306/one
+    username: one
+    password: 95aninjv
+
+
+logging:
+  level:
+    org.springframework.data.r2dbc: INFO  # 设置 r2dbc 日志级别为 INFO 开启sql语句打印
+    com.hjong.achat: DEBUG  # 设置自定义包的日志级别为 DEBUG
+
+chat:
+  proxy:
+    host: 127.0.0.1
+    port: 20172
+
+  token:
+    secret: 95aninjv
+    issuer: hk.hjong.cn
+    expires-minute: 43200
+
+
+

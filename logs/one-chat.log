@@ -1,0 +1,11 @@
+2024-03-18 16:11:48.352 [ background-preinit ] ==== [ INFO  ] [ org.hibernate.validator.internal.util.Version : 21 ] ==== HV000001: Hibernate Validator 8.0.1.Final
+2024-03-18 16:11:48.367 [ main ] ==== [ INFO  ] [ com.hjong.achat.AchatApplication : 50 ] ==== Starting AchatApplication using Java 21.0.1 with PID 26900 (C:\Users\chicr\Dev\Java\Achat\target\classes started by chicr in C:\Users\chicr\Dev\Java\Achat)
+2024-03-18 16:11:48.367 [ main ] ==== [ INFO  ] [ com.hjong.achat.AchatApplication : 654 ] ==== No active profile set, falling back to 1 default profile: "default"
+2024-03-18 16:11:48.555 [ main ] ==== [ INFO  ] [ o.s.d.r.config.RepositoryConfigurationDelegate : 139 ] ==== Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2024-03-18 16:11:48.561 [ main ] ==== [ INFO  ] [ o.s.d.r.config.RepositoryConfigurationDelegate : 208 ] ==== Finished Spring Data repository scanning in 2 ms. Found 0 R2DBC repository interfaces.
+2024-03-18 16:11:48.603 [ main ] ==== [ INFO  ] [ o.s.d.r.config.RepositoryConfigurationDelegate : 139 ] ==== Bootstrapping Spring Data R2DBC repositories in DEFAULT mode.
+2024-03-18 16:11:48.660 [ main ] ==== [ INFO  ] [ o.s.d.r.config.RepositoryConfigurationDelegate : 208 ] ==== Finished Spring Data repository scanning in 56 ms. Found 3 R2DBC repository interfaces.
+2024-03-18 16:11:49.220 [ main ] ==== [ INFO  ] [ o.s.boot.web.embedded.netty.NettyWebServer : 141 ] ==== Netty started on port 8080
+2024-03-18 16:11:49.222 [ main ] ==== [ INFO  ] [ com.hjong.achat.AchatApplication : 56 ] ==== Started AchatApplication in 1.007 seconds (process running for 1.331)
+2024-03-18 16:12:03.090 [ reactor-http-nio-2 ] ==== [ INFO  ] [ com.hjong.achat.controller.ProxyController : 37 ] ==== 来自ip：/192.168.1.144:49174 的请求
+2024-03-18 16:12:03.093 [ reactor-http-nio-2 ] ==== [ INFO  ] [ com.hjong.achat.service.impl.ProxyServiceImpl : 34 ] ==== 输入: 你好
