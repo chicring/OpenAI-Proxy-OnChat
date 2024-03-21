@@ -89,25 +89,5 @@ public abstract class Adapter {
         }
     }
 
-    public OpenAiResponseBody modifyBody(OpenAiResponseBody response){
 
-        String id = UUID.randomUUID().toString();
-        response.setId(id);
-        response.setObject("chat.completion.chunk");
-        response.setCreated(Instant.now().getEpochSecond());
-        response.setModel(model);
-
-        response.getChoices().getFirst().setIndex(0);
-        response.getChoices().getFirst().setFinish_reason("stop");
-
-        OpenAiResponseBody.Usage usage = new OpenAiResponseBody.Usage();
-
-        usage.setPrompt_tokens(0);
-        usage.setCompletion_tokens(0);
-        usage.setTotal_tokens(0);
-
-        response.setUsage(usage);
-
-        return response;
-    }
 }

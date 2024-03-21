@@ -1,8 +1,16 @@
 package com.hjong.achat.adapter.gemini;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.hjong.achat.adapter.openai.OpenAiResponseBody;
+import com.hjong.achat.enums.ChatRoleEnum;
+import com.hjong.achat.util.JsonUtil;
 import lombok.Data;
+import reactor.core.publisher.Flux;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author HJong
@@ -29,5 +37,46 @@ public class GeminiResponseBody {
                 private String text;
             }
         }
+    }
+
+
+    public static Flux<String> GeminiToOpenAI(String text){
+        JsonNode replyJson = JsonUtil.parseJSONObject("{" + text + "}");
+
+        OpenAiResponseBody openAIResponseBody = new OpenAiResponseBody();
+
+        List<OpenAiResponseBody.Choices> choicesList = new ArrayList<>();
+
+        OpenAiResponseBody.Choices choices = new OpenAiResponseBody.Choices();
+        choices.setIndex(1);
+
+        OpenAiResponseBody.Message message = new OpenAiResponseBody.Message();
+        message.setRole(ChatRoleEnum.ASSISTANT.getRole());
+        message.setContent(replyJson.get("text").asText());
+
+        choices.setMessage(message);
+        choices.setDelta(message);
+        choicesList.add(choices);
+
+        openAIResponseBody.setChoices(choicesList);
+
+        String id = UUID.randomUUID().toString();
+        openAIResponseBody.setId(id);
+        openAIResponseBody.setObject("chat.completion.chunk");
+        openAIResponseBody.setCreated(Instant.now().getEpochSecond());
+        openAIResponseBody.setModel("gemini-pro");
+
+        openAIResponseBody.getChoices().getFirst().setIndex(0);
+        openAIResponseBody.getChoices().getFirst().setFinish_reason("stop");
+
+        OpenAiResponseBody.Usage usage = new OpenAiResponseBody.Usage();
+
+        usage.setPrompt_tokens(0);
+        usage.setCompletion_tokens(0);
+        usage.setTotal_tokens(0);
+
+        openAIResponseBody.setUsage(usage);
+
+        return Flux.just(JsonUtil.toJSONString(openAIResponseBody));
     }
 }
