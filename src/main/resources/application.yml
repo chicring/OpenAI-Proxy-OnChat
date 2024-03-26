@@ -11,7 +11,6 @@ spring:
 logging:
   level:
     org.springframework.data.r2dbc: INFO  # 设置 r2dbc 日志级别为 INFO 开启sql语句打印
-    com.hjong.achat: DEBUG  # 设置自定义包的日志级别为 DEBUG
 
 chat:
   proxy:
@@ -23,5 +22,6 @@ chat:
     issuer: hk.hjong.cn
     expires-minute: 43200
 
+debug: true
 
 

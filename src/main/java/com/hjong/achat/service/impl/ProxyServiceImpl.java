@@ -3,10 +3,14 @@ package com.hjong.achat.service.impl;
 import com.hjong.achat.adapter.Adapter;
 import com.hjong.achat.adapter.openai.OpenAiRequestBody;
 import com.hjong.achat.entity.DTO.Channel;
+import com.hjong.achat.enums.ServiceExceptionEnum;
+import com.hjong.achat.exception.ServiceException;
+import com.hjong.achat.repositories.ApiKeyRepositories;
 import com.hjong.achat.service.ChannelService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,28 +33,45 @@ public class ProxyServiceImpl {
     @Resource
     ChannelService channelService;
 
-    public Flux<String> completions(OpenAiRequestBody request){
+    @Resource
+    ApiKeyRepositories apiKeyRepositories;
 
-        log.info("输入: {}", request.getMessages().getLast().getContent());
+    public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
-        if (request.getMessages().isEmpty()){
-            return Flux.empty();
+        String apiKey = exchange.getRequest().getHeaders().getFirst("Authorization");
+        if (apiKey != null && apiKey.startsWith("Bearer ")) {
+            apiKey = apiKey.substring(7);
         }
 
-        //Mono<List<Channel>>类型的，我想得到第一个的type
-        //channelService.selectChannel(request.getModel())
-        //然后执行
-        //selectorMap.get(type).sendMessage(request, channel)
+        return apiKeyRepositories.findByApiKey(apiKey)
+                .hasElement()
+                .flatMapMany(exists -> {
+                    if (!exists) {
+                        return Mono.error(new ServiceException(ServiceExceptionEnum.INVALID_API_KEY));
+                    }
 
-        return channelService.selectChannel(request.getModel())
-                .flatMapMany(channels -> {
-                    if (channels.isEmpty()) {
+                    log.info("输入: {}", request.getMessages().getLast().getContent());
+
+                    if (request.getMessages().isEmpty()){
                         return Flux.empty();
                     }
-                    Channel channel = channels.getFirst();
-                    //根据type选择对应的Adapter
-                    return selectorMap.get(channel.getType()).sendMessage(request, channel);
-                });
 
+                    return channelService.selectChannel(request.getModel())
+                            .flatMapMany(channels -> {
+                                if (channels.isEmpty()) {
+                                    return Mono.error(new ServiceException(ServiceExceptionEnum.CHANNEL_NOT_EXIST));
+                                }
+                                Channel channel = channels.getFirst();
+
+                                return selectorMap.get(channel.getType()).sendMessage(request, channel,exchange);
+                            })
+                            .onErrorResume(e -> {
+                                if (e instanceof ServiceException) {
+                                    log.error("服务异常: {}", e.getMessage());
+                                    return Mono.error(e);
+                                }
+                                return Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION));
+                            });
+                });
     }
 }

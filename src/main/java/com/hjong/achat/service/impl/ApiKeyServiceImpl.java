@@ -9,6 +9,7 @@ import com.hjong.achat.service.ApiKeyService;
 import com.hjong.achat.util.KeyUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.rmi.ServerException;
@@ -51,7 +52,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         long expiresStampSeconds = future.getEpochSecond();
 
         ApiKey apiKey = new ApiKey()
-                .setApiKey(keyUtil.generateKey())
+                .setApiKey(keyUtil.generateKey(userId))
                 .setCreatedAt(timeStampSeconds)
                 .setExpiresAt(expiresStampSeconds)
                 .setName(name)
@@ -70,5 +71,12 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     @Override
     public Mono<ApiKey> updateKey(ApiKey key) {
         return null;
+    }
+
+    @Override
+    public Flux<ApiKey> findByUserId(Integer userId) {
+
+        return apiKeyRepositories.findByUserId(userId)
+                .onErrorResume(e -> Flux.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION)));
     }
 }

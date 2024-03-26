@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hjong.achat.entity.Result;
 import com.hjong.achat.entity.VO.req.UserLoginVO;
 import com.hjong.achat.entity.VO.req.UserRegisterVO;
+import com.hjong.achat.entity.VO.resp.UserInfoVO;
 import com.hjong.achat.service.UserService;
 import com.hjong.achat.util.JwtUtil;
 import jakarta.annotation.Resource;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
  * @date 2024/3/18
  **/
 @Slf4j
+@CrossOrigin
 @Validated
 @RestController
 @RequestMapping("/user")
@@ -31,6 +33,7 @@ public class UserController {
     @Resource
     UserService userService;
 
+
     @PostMapping("/login")
     public Mono<Result> doLogin(@Valid @RequestBody UserLoginVO vo){
         return userService.findByNameOrEmail(vo).flatMap( user -> {
@@ -41,12 +44,13 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public Mono<Result> doRegister(@Valid @RequestBody UserRegisterVO vo){
+    public Mono<Result<Void>> doRegister(@Valid @RequestBody UserRegisterVO vo){
         return userService.saveUser(vo).thenReturn(Result.ok("注册成功"));
     }
 
+
     @GetMapping("/info")
-    public Mono<Result> userInfo(ServerWebExchange exchange) {
+    public Mono<Result<UserInfoVO>> userInfo(ServerWebExchange exchange) {
 
         String userId = exchange.getRequest().getHeaders().getFirst("USER-ID");
         log.debug("用户：{} 查询个人信息", userId);

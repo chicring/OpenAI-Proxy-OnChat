@@ -11,11 +11,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * @author HJong
@@ -30,7 +32,6 @@ public class ChatLogAspect {
     /** 换行符 */
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    private final Instant instant = Instant.now();
     @Resource
     LogService logService;
 
@@ -52,18 +53,26 @@ public class ChatLogAspect {
             log.info("************************目标方法异常以后************************");
             log.info("error:" + error);
         }).doFinally(signalType -> {
-            Channel channel = (Channel) joinPoint.getArgs()[1];
             log.info("耗时 {} 秒", (System.currentTimeMillis()-start)/ 1000.0);
+            Channel channel = (Channel) joinPoint.getArgs()[1];
+            ServerWebExchange exchange = (ServerWebExchange) joinPoint.getArgs()[2];
+
+            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+            String[] parts = token.split("\\.");  // 注意，"." 是一个特殊字符，所以需要用 "\\." 来表示
+            Integer userId = Integer.valueOf(parts[1]);
+
 
             Mono<Logs> saveLog = logService.saveLog(
                             new Logs()
                                     .setChannelId(channel.getId())
                                     .setChannelType(channel.getType())
                                     .setChannelName(channel.getName())
+                                    .setUserId(userId)
                                     .setModel(requestBody.getModel())
                                     .setInputText(requestBody.getMessages().getLast().getContent())
                                     .setConsumeTime((System.currentTimeMillis()-start)/ 1000.0)
-                                    .setCreatedAt(instant.getEpochSecond())
+                                    .setCreatedAt(Instant.now().getEpochSecond())
+                                    .setIp(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress())
                     );
             saveLog.subscribeOn(Schedulers.boundedElastic()).subscribe();
             log.info("************************ End ************************" + LINE_SEPARATOR);

@@ -3,6 +3,9 @@ package com.hjong.achat.repositories;
 import com.hjong.achat.entity.DTO.Logs;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+
+import java.awt.print.Pageable;
 
 /**
  * @author HJong
@@ -11,4 +14,6 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface LogsRepositories extends R2dbcRepository<Logs,Long> {
+
+//    Flux<Logs> findAll(Pageable pageable, Logs logs);
 }

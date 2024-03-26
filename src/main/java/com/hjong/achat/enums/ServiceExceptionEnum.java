@@ -26,6 +26,10 @@ public enum ServiceExceptionEnum {
      */
     USER_NOT_EXIST(404, "用户不存在"),
     /**
+     * 渠道不存在
+     */
+    CHANNEL_NOT_EXIST(404, "模型不可用"),
+    /**
      * 用户已存在
      */
     USER_EXIST(400, "用户已存在"),

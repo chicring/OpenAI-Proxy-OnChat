@@ -23,12 +23,11 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Resource
     ChannelRepositories channelRepositories;
-    private final Instant instant = Instant.now();
 
     @Override
     public Mono<Channel> saveChannel(Channel channel) {
         //添加生成时间
-        channel.setCreatedAt(instant.getEpochSecond());
+        channel.setCreatedAt(Instant.now().getEpochSecond());
 
         return channelRepositories.save(channel).onErrorResume(e -> Mono.error(new ServiceException(ServiceExceptionEnum.INVALID_ACTION)));
     }
@@ -45,6 +44,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Mono<List<Channel>> selectChannel(String model) {
-        return channelRepositories.selectChannel(model).collectList();
+        return channelRepositories.selectChannel(model)
+                .collectList();
     }
 }

@@ -5,6 +5,7 @@ import com.hjong.achat.exception.ServiceException;
 import com.hjong.achat.util.JwtUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.PathContainer;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -46,6 +47,12 @@ public class MyWebFilter implements WebFilter {
         ServerHttpRequest request = exchange.getRequest();
         PathContainer requestPath = request.getPath().pathWithinApplication();
 
+
+        // Check if the request is a preflight request
+        if (request.getMethod() == HttpMethod.OPTIONS) {
+            // If it is a preflight request, directly pass it to the next filter
+            return chain.filter(exchange);
+        }
 
         boolean isExclude = excludePatterns.stream().anyMatch(pattern -> pattern.matches(requestPath));
         if(isExclude){

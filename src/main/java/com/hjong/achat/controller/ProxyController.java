@@ -44,7 +44,7 @@ public class ProxyController {
         }
 
         return apiKeyService.validateKey(exchange.getRequest().getHeaders().getFirst("Authorization"))
-                .thenMany(ProxyServiceImpl.completions(requestBody));
+                .thenMany(ProxyServiceImpl.completions(requestBody,exchange));
     }
 
 

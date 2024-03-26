@@ -22,7 +22,7 @@ import java.util.List;
  * @version 1.0
  * @date 2024/3/16
  **/
-@Slf4j
+
 @Component("gemini")
 public class GeminiCompletions extends Adapter {
     public GeminiCompletions(WebClient webClient, WebClient webClientEnableProxy) {
@@ -31,7 +31,14 @@ public class GeminiCompletions extends Adapter {
 
     @Override
     protected Flux<String> completions(OpenAiRequestBody request, Channel channel, WebClient webClient) {
-        return null;
+
+        return webClient.post()
+                .uri(url)
+                .bodyValue(GeminiRequestBody.builder(request))
+                .retrieve()
+                .bodyToFlux(String.class)
+                .filter((str) -> str.contains("text"))
+                .flatMap(GeminiResponseBody::GeminiToOpenAI);
     }
 
 

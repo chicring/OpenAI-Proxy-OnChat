@@ -25,7 +25,7 @@ public class Logs {
     private Integer userId;
     private String username;
     private String model;
-    private String totalToken;
+    private Long totalToken;
     private Long promptTokens;
     private Long completionTokens;
     private String inputText;

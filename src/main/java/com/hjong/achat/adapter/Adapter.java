@@ -7,6 +7,7 @@ import com.hjong.achat.enums.ChannelType;
 import com.hjong.achat.enums.ChatRoleEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 
@@ -43,14 +44,16 @@ public abstract class Adapter {
 
     protected abstract Flux<String> streamCompletions(OpenAiRequestBody request, Channel channel, WebClient webClient);
 
-    public Flux<String> sendMessage(OpenAiRequestBody request, Channel channel){
+    public Flux<String> sendMessage(OpenAiRequestBody request, Channel channel, ServerWebExchange serverWebExchange){
 
         WebClient webClientUse = channel.isEnableProxy() ? webClientEnableProxy : webClient;
 
         url = channel.getBaseUrl() + getUrlByType(channel.getType());
 
-        if(channel.getType().equals("gemini")){
+        if(channel.getType().equals("gemini") && request.isStream()){
             url = url + channel.getModel() + ":streamGenerateContent?key=" + channel.getApiKey();
+        }else if(channel.getType().equals("gemini")){
+            url = url + channel.getModel() + ":generateContent?key=" + channel.getApiKey();
         }
 
         log.debug("请求类型：{},请求站点：{}",channel.getType(),url);

@@ -59,7 +59,7 @@ public class GlobalErrorHandler  {
 
     @ExceptionHandler(value = ServiceException.class)
     public Mono<Result<Object>> handleServiceException(ServiceException e){
-        log.error("业务异常：{}",e.getMessage());
+        log.error("自定义异常：{}",e.getMessage());
         return Mono.just(Result.fail(e.getServiceExceptionEnum()));
     }
 
@@ -73,7 +73,7 @@ public class GlobalErrorHandler  {
 
     @ExceptionHandler(value = Exception.class)
     public Mono<Result<Object>> exceptionHandler(Exception e) {
-        log.error("发生未知异常.",e);
+        log.error("发生未知异常 {}",e.getMessage());
         return Mono.just(Result.fail(e.getMessage()));
     }
 }

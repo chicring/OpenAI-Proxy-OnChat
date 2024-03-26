@@ -17,8 +17,9 @@ public enum UrlEnums {
 
     TEXT_QWEN("qwen","/api/v1/services/aigc/text-generation/generation"),
 
-    TEXT_ZHIPU("zhipu","/api/paas/v4/chat/completions");
+    TEXT_ZHIPU("zhipu","/api/paas/v4/chat/completions"),
 
+    TEXT_Ai360("ai360","/v1/chat/completions");
 
     private final String type;
     private final String url;

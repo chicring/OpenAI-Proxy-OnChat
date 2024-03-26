@@ -12,8 +12,8 @@ import java.util.UUID;
 
 @Component
 public class KeyUtil {
-    public String generateKey() {
-        return "sk-" + UUID.randomUUID().toString().replace("-", "");
+    public String generateKey(Integer id) {
+        return UUID.randomUUID().toString().replace("-", "") + "." + id;
     }
 
 }

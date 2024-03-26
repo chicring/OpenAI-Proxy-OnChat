@@ -1,6 +1,7 @@
 package com.hjong.achat.service;
 
 import com.hjong.achat.entity.DTO.ApiKey;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -17,4 +18,6 @@ public interface ApiKeyService {
     Mono<Void> deleteKey(Integer id);
 
     Mono<ApiKey> updateKey(ApiKey key);
+
+    Flux<ApiKey> findByUserId(Integer userId);
 }

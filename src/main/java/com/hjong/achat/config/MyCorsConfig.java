@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 /**
  * @author HJong
@@ -12,8 +15,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
  * @date 2024/3/17
  **/
 
-
 @Configuration
-public class MyCorsConfig {
+public class MyCorsConfig{
 
 }

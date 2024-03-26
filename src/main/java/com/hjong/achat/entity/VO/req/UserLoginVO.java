@@ -13,6 +13,7 @@ import lombok.Data;
 
 @Data
 public class UserLoginVO {
+
     @NotEmpty(message = "账号不能为空")
     String account;  //用户名或邮箱
     @NotEmpty(message = "密码不能为空")

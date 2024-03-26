@@ -30,17 +30,19 @@ public class UserServiceImpl implements UserService {
     public Mono<User> findByNameOrEmail(UserLoginVO vo) {
 
         return userRepositories.findByNameOrEmail(vo.getAccount())
+                .switchIfEmpty(  Mono.error(new ServiceException(ServiceExceptionEnum.USER_NOT_EXIST)))
                 .flatMap(user -> {
-                    if(user == null) {
-                        return Mono.error(new ServiceException(ServiceExceptionEnum.USER_NOT_EXIST));
-                    }else {
-                        if(!user.getPassword().equals(vo.getPwd())) {
-                            return Mono.error(new ServiceException(ServiceExceptionEnum.PASSWORD_ERROR));
-                        }
-                        return Mono.just(user);
+                    if(!user.getPassword().equals(vo.getPwd())) {
+                        return Mono.error(new ServiceException(ServiceExceptionEnum.PASSWORD_ERROR));
                     }
+                    return Mono.just(user);
                 })
-                .onErrorResume(e -> Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION)));
+                .onErrorResume(e -> {
+                    if (e instanceof ServiceException) {
+                        return Mono.error(e);
+                    }
+                    return Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION));
+                });
     }
 
     @Override
