@@ -22,12 +22,6 @@ public class ZhipuCompletions extends Adapter {
 
     @Override
     protected Flux<String> completions(OpenAiRequestBody request, Channel channel, WebClient webClient) {
-        if(request.getTop_p() >= 1 ){
-            request.setTop_p(0.99);
-        }
-        if(request.getTemperature() >= 1){
-            request.setTemperature(0.99);
-        }
 
         return webClient.post()
                 .uri(super.url)
@@ -39,13 +33,6 @@ public class ZhipuCompletions extends Adapter {
 
     @Override
     protected Flux<String> streamCompletions(OpenAiRequestBody request, Channel channel, WebClient webClient) {
-
-        if(request.getTop_p() >= 1 ){
-            request.setTop_p(0.99);
-        }
-        if(request.getTemperature() >= 1){
-            request.setTemperature(0.99);
-        }
 
         return webClient.post()
                 .uri(super.url)

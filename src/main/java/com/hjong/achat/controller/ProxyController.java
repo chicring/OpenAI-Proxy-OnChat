@@ -26,9 +26,6 @@ import java.util.Objects;
 public class ProxyController {
 
     @Resource
-    ApiKeyService  apiKeyService;
-
-    @Resource
     ProxyServiceImpl ProxyServiceImpl;
 
     @CrossOrigin
@@ -43,8 +40,7 @@ public class ProxyController {
             serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         }
 
-        return apiKeyService.validateKey(exchange.getRequest().getHeaders().getFirst("Authorization"))
-                .thenMany(ProxyServiceImpl.completions(requestBody,exchange));
+        return ProxyServiceImpl.completions(requestBody,exchange);
     }
 
 

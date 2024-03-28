@@ -36,7 +36,7 @@ public class ProxyServiceImpl {
     @Resource
     ApiKeyRepositories apiKeyRepositories;
     @Resource
-    Strategy strategy;
+    private Map<String,Strategy> strategyMap;
 
     public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
@@ -64,7 +64,7 @@ public class ProxyServiceImpl {
                                     log.error("渠道不存在");
                                     return Mono.error(new ServiceException(ServiceExceptionEnum.CHANNEL_NOT_EXIST));
                                 }
-                                Channel channel = strategy.execute(channels);
+                                Channel channel = strategyMap.get("first").execute(channels);
 
                                 return selectorMap.get(channel.getType()).sendMessage(request, channel,exchange);
                             })
@@ -73,6 +73,7 @@ public class ProxyServiceImpl {
                                     log.error("服务异常: {}", e.getMessage());
                                     return Mono.error(e);
                                 }
+                                log.error(e.getMessage());
                                 return Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION));
                             });
                 });

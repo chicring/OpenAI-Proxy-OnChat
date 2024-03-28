@@ -62,12 +62,13 @@ public class QwenRequestBody {
         Parameters parameters = new Parameters();
         parameters.setTemperature(openAiRequestBody.getTemperature());
         // qwen top_p 不能大于等于1
-        double top_p = openAiRequestBody.getTop_p();
-        if(top_p > 1 || top_p == 1 ){
-            parameters.setTop_p(0.9);
-        }else {
-            parameters.setTop_p(openAiRequestBody.getTop_p());
-        }
+//        double top_p = openAiRequestBody.getTop_p();
+//        if(top_p > 1 || top_p == 1 ){
+//            parameters.setTop_p(0.9);
+//        }else {
+//            parameters.setTop_p(openAiRequestBody.getTop_p());
+//        }
+        parameters.setTop_p(openAiRequestBody.getTop_p());
         //token不能大于1500
         Integer max_tokens = openAiRequestBody.getMax_tokens();
         if(max_tokens != null && max_tokens > 1500) {

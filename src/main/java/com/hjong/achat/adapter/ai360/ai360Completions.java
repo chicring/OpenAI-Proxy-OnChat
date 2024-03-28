@@ -36,13 +36,6 @@ public class ai360Completions extends Adapter {
     @Override
     protected Flux<String> streamCompletions(OpenAiRequestBody request, Channel channel, WebClient webClient) {
 
-        if(request.getTop_p() >= 1 ){
-            request.setTop_p(0.99);
-        }
-        if(request.getTemperature() >= 1){
-            request.setTemperature(0.99);
-        }
-
         return webClient.post()
                 .uri(super.url)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + channel.getApiKey())

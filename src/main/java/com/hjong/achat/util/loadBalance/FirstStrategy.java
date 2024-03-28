@@ -10,7 +10,7 @@ import java.util.List;
  * @version 1.0
  * @date 2024/3/26
  **/
-@Component
+@Component("first")
 public class FirstStrategy implements Strategy{
     @Override
     public Channel execute(List<Channel> channelList) {

@@ -55,7 +55,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Mono<List<Channel>> findAll() {
+    public Mono<List<Channel>> findAll(){
         return channelRepositories.findAll().collectList();
     }
 }

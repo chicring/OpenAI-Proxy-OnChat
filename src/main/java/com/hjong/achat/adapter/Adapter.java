@@ -56,7 +56,16 @@ public abstract class Adapter {
             url = url + channel.getModel() + ":generateContent?key=" + channel.getApiKey();
         }
 
+        if(request.getTop_p() >= 1 || request.getTop_p() == 0.0){
+            request.setTop_p(0.7);
+        }
+
+        if(request.getTemperature() >= 1 || request.getTemperature() == 0.0){
+            request.setTemperature(0.95);
+        }
+
         log.debug("请求类型：{},请求站点：{}",channel.getType(),url);
+//        log.info(request.toString());
         //设置渠道选择的模型
         model = channel.getModel();
         request.setModel(channel.getModel());

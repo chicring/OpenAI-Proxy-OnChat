@@ -22,6 +22,6 @@ chat:
     issuer: hk.hjong.cn
     expires-minute: 43200
 
-#debug: true
+debug: true
 
 

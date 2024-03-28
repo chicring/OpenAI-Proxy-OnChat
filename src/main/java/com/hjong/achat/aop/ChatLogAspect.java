@@ -4,6 +4,7 @@ import com.hjong.achat.adapter.openai.OpenAiRequestBody;
 import com.hjong.achat.entity.DTO.Channel;
 import com.hjong.achat.entity.DTO.Logs;
 import com.hjong.achat.service.LogService;
+import com.hjong.achat.util.JsonUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -44,16 +45,20 @@ public class ChatLogAspect {
     public Flux<Object> aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info("************************ Start ************************");
         long start = System.currentTimeMillis();
-
-        OpenAiRequestBody requestBody = (OpenAiRequestBody) joinPoint.getArgs()[0];
-
+        String output;
+        //执行目标方法
         Flux<Object> result = (Flux<Object>) joinPoint.proceed();
 
         return result.doOnError(error -> {
             log.info("************************目标方法异常以后************************");
             log.info("error:" + error);
-        }).doFinally(signalType -> {
+        }).doOnNext(json -> {
+//            OpenAiRequestBody body = JsonUtil.parseObject((String) json,OpenAiRequestBody.class);
+//            log.info(body.toString());
+        }).doOnComplete(() ->{
             log.info("耗时 {} 秒", (System.currentTimeMillis()-start)/ 1000.0);
+
+            OpenAiRequestBody requestBody = (OpenAiRequestBody) joinPoint.getArgs()[0];
             Channel channel = (Channel) joinPoint.getArgs()[1];
             ServerWebExchange exchange = (ServerWebExchange) joinPoint.getArgs()[2];
 
