@@ -4,6 +4,8 @@ import com.hjong.achat.entity.DTO.ApiKey;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * @author HJong
  * @version 1.0
@@ -13,11 +15,11 @@ public interface ApiKeyService {
 
     Mono<Void> validateKey(String key);
 
-    Mono<ApiKey> saveKey(String name, int expDay, Integer userId);
+    Mono<ApiKey> saveKey(String name, long exp, Integer userId);
 
     Mono<Void> deleteKey(Integer id);
 
     Mono<ApiKey> updateKey(ApiKey key);
 
-    Flux<ApiKey> findByUserId(Integer userId);
+    Mono<List<ApiKey>> findByUserId(Integer userId);
 }

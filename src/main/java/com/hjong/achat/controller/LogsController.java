@@ -2,7 +2,7 @@ package com.hjong.achat.controller;
 
 import com.hjong.achat.entity.DTO.Logs;
 import com.hjong.achat.entity.Result;
-import com.hjong.achat.entity.VO.req.findLogVO;
+import com.hjong.achat.entity.VO.req.FindLogVO;
 import com.hjong.achat.entity.VO.resp.OverviewVO;
 import com.hjong.achat.entity.VO.resp.RequestAmountVO;
 import com.hjong.achat.service.LogService;
@@ -30,9 +30,9 @@ public class LogsController {
 
     @PostMapping("/find")
 
-    public Mono<Result<List<Logs>>> findAll(@Valid @RequestBody(required = false) findLogVO vo) {
+    public Mono<Result<List<Logs>>> findAll(@Valid @RequestBody(required = false) FindLogVO vo) {
         if (vo == null) {
-            findLogVO findLogVO = new findLogVO();
+            FindLogVO findLogVO = new FindLogVO();
             return logService.findAll(findLogVO).collectList()
                     .flatMap( list -> {
                         Result<List<Logs>> result = Result.ok(list);

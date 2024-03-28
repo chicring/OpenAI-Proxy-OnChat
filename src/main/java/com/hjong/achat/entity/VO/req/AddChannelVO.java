@@ -10,7 +10,7 @@ import lombok.Data;
  **/
 
 @Data
-public class addChannelVO {
+public class AddChannelVO {
     @NotEmpty(message = "name不能为空")
     private String name;
 

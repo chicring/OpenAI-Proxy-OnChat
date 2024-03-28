@@ -1,11 +1,11 @@
 package com.hjong.achat.entity.DTO;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.Instant;
 
 /**
  * @author HJong
@@ -23,6 +23,8 @@ public class Channel {
     private String type;
     private String apiKey;
     private String baseUrl;
+
+    @JsonRawValue
     private String models;
     private String model;
     private Integer priority;

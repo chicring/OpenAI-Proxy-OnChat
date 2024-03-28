@@ -26,7 +26,7 @@ public class ApiKey {
     private String name;
     private String apiKey;
     private Boolean enabled;
-    private int userId;
+    private Integer userId;
     private Long createdAt;
     private Long expiresAt;
 }

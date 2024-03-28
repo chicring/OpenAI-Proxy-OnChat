@@ -4,6 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hjong.achat.entity.Result;
 import com.hjong.achat.entity.VO.req.UserLoginVO;
 import com.hjong.achat.entity.VO.req.UserRegisterVO;
+import com.hjong.achat.entity.VO.resp.TokenInfoVO;
 import com.hjong.achat.entity.VO.resp.UserInfoVO;
 import com.hjong.achat.service.UserService;
 import com.hjong.achat.util.JwtUtil;
@@ -35,7 +36,7 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public Mono<Result> doLogin(@Valid @RequestBody UserLoginVO vo){
+    public Mono<Result<TokenInfoVO>> doLogin(@Valid @RequestBody UserLoginVO vo){
         return userService.findByNameOrEmail(vo).flatMap( user -> {
             log.debug("用户：{} 登录成功",user.getUsername());
             return Mono.just(Result.ok("登录成功",jwtUtil.tokenize(user)));

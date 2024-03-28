@@ -7,6 +7,7 @@ import com.hjong.achat.enums.ServiceExceptionEnum;
 import com.hjong.achat.exception.ServiceException;
 import com.hjong.achat.repositories.ApiKeyRepositories;
 import com.hjong.achat.service.ChannelService;
+import com.hjong.achat.util.loadBalance.Strategy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +35,8 @@ public class ProxyServiceImpl {
 
     @Resource
     ApiKeyRepositories apiKeyRepositories;
+    @Resource
+    Strategy strategy;
 
     public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
@@ -59,9 +61,10 @@ public class ProxyServiceImpl {
                     return channelService.selectChannel(request.getModel())
                             .flatMapMany(channels -> {
                                 if (channels.isEmpty()) {
+                                    log.error("渠道不存在");
                                     return Mono.error(new ServiceException(ServiceExceptionEnum.CHANNEL_NOT_EXIST));
                                 }
-                                Channel channel = channels.getFirst();
+                                Channel channel = strategy.execute(channels);
 
                                 return selectorMap.get(channel.getType()).sendMessage(request, channel,exchange);
                             })

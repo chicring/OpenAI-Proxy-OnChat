@@ -79,8 +79,6 @@ public class UserServiceImpl implements UserService {
                 }
         ).onErrorResume(e -> Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION)));
 
-
-
     }
 
     @Override

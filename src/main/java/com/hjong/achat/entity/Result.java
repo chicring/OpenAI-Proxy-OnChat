@@ -6,17 +6,15 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static com.hjong.achat.util.JsonUtil.toJSONString;
+
 /**
  * @author HJong
  * @version 1.0
  * @date 2024/3/17
  **/
 @Data
-public class Result<T> implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
+public class Result<T>{
 
     private Integer code;
     private String msg;
@@ -53,7 +51,11 @@ public class Result<T> implements Serializable {
     public static <T> Result<T> fail(T data) {
         return restResult(data, 500, "操作失败");
     }
-    
+
+    public String asJsonString() {
+        return toJSONString(this);
+    }
+
     private static <T> Result<T> restResult(T data, int code, String msg) {
         Result<T> r = new Result<>();
         r.setCode(code);

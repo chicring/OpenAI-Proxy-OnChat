@@ -1,9 +1,10 @@
 package com.hjong.achat.service;
 
 import com.hjong.achat.entity.DTO.Logs;
-import com.hjong.achat.entity.VO.req.findLogVO;
+import com.hjong.achat.entity.VO.req.FindLogVO;
 import com.hjong.achat.entity.VO.resp.OverviewVO;
 import com.hjong.achat.entity.VO.resp.RequestAmountVO;
+import com.hjong.achat.entity.VO.resp.StatusInfoVO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
  **/
 public interface LogService {
     Mono<Logs> saveLog(Logs logs);
-    Flux<Logs> findAll(findLogVO vo);
+    Flux<Logs> findAll(FindLogVO vo);
 
     Mono<RequestAmountVO> logAmount();
 

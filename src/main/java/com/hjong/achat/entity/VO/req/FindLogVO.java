@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2024/3/23
  **/
 @Data
-public class findLogVO {
+public class FindLogVO {
     private Integer channelId;
     private String channelType;
     private String channelName;

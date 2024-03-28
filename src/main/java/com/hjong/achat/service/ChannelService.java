@@ -19,4 +19,6 @@ public interface ChannelService {
     Mono<Channel> updateChannel(Channel channel);
 
     Mono<List<Channel>> selectChannel(String model);
+
+    Mono<List<Channel>> findAll();
 }

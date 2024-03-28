@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import java.rmi.ServerException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 /**
  * @author HJong
@@ -43,18 +44,15 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     }
 
     @Override
-    public Mono<ApiKey> saveKey(String name,int expDay,Integer userId) {
+    public Mono<ApiKey> saveKey(String name,long expiresAt,Integer userId) {
 
         Instant instant = Instant.now();
         long timeStampSeconds = instant.getEpochSecond();
 
-        Instant future = instant.plus(expDay, ChronoUnit.DAYS);
-        long expiresStampSeconds = future.getEpochSecond();
-
         ApiKey apiKey = new ApiKey()
                 .setApiKey(keyUtil.generateKey(userId))
                 .setCreatedAt(timeStampSeconds)
-                .setExpiresAt(expiresStampSeconds)
+                .setExpiresAt(expiresAt)
                 .setName(name)
                 .setUserId(userId);
 
@@ -74,9 +72,10 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     }
 
     @Override
-    public Flux<ApiKey> findByUserId(Integer userId) {
+    public Mono<List<ApiKey>> findByUserId(Integer userId) {
 
         return apiKeyRepositories.findByUserId(userId)
-                .onErrorResume(e -> Flux.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION)));
+                .collectList()
+                .onErrorResume(e -> Mono.error(new ServiceException(ServiceExceptionEnum.SERVICE_EXCEPTION)));
     }
 }

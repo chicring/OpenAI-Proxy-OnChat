@@ -1,16 +1,22 @@
 package com.hjong.achat.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.hjong.achat.entity.DTO.Channel;
 import com.hjong.achat.enums.ServiceExceptionEnum;
 import com.hjong.achat.exception.ServiceException;
 import com.hjong.achat.repositories.ChannelRepositories;
 import com.hjong.achat.service.ChannelService;
+import com.hjong.achat.util.JsonUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+
+import static com.hjong.achat.util.JsonUtil.parseJSONObject;
+import static com.hjong.achat.util.JsonUtil.toJSONString;
 
 /**
  * @author HJong
@@ -46,5 +52,10 @@ public class ChannelServiceImpl implements ChannelService {
     public Mono<List<Channel>> selectChannel(String model) {
         return channelRepositories.selectChannel(model)
                 .collectList();
+    }
+
+    @Override
+    public Mono<List<Channel>> findAll() {
+        return channelRepositories.findAll().collectList();
     }
 }

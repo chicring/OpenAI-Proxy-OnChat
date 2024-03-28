@@ -1,9 +1,10 @@
 package com.hjong.achat.service.impl;
 
 import com.hjong.achat.entity.DTO.Logs;
-import com.hjong.achat.entity.VO.req.findLogVO;
+import com.hjong.achat.entity.VO.req.FindLogVO;
 import com.hjong.achat.entity.VO.resp.OverviewVO;
 import com.hjong.achat.entity.VO.resp.RequestAmountVO;
+import com.hjong.achat.entity.VO.resp.StatusInfoVO;
 import com.hjong.achat.repositories.ChannelRepositories;
 import com.hjong.achat.repositories.LogsRepositories;
 import com.hjong.achat.repositories.UserRepositories;
@@ -15,8 +16,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,14 +28,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class LogServiceImpl implements LogService {
-
     @Resource
     LogsRepositories logsRepositories;
     @Resource
     ChannelRepositories channelRepositories;
     @Resource
     UserRepositories   userRepositories;
-
     @Resource
     DatabaseClient databaseClient;
 
@@ -50,7 +47,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public Flux<Logs> findAll(findLogVO vo) {
+    public Flux<Logs> findAll(FindLogVO vo) {
 
         String sql = builderSQL(vo);
         return databaseClient.sql(sql)
@@ -105,7 +102,6 @@ public class LogServiceImpl implements LogService {
     @Override
     public Mono<OverviewVO> overview() {
 
-
         String sql = "SELECT DATE_FORMAT(FROM_UNIXTIME(created_at), '%m-%d') as day, model, COUNT(*) as count FROM logs GROUP BY day, model";
 
         return databaseClient.sql(sql)
@@ -125,30 +121,33 @@ public class LogServiceImpl implements LogService {
     }
 
 
+
+
     private OverviewVO toOverview(List<OverviewVO.Day> days) {
-        Map<String, List<OverviewVO.Day>> groupedDays = days.stream()
-                .collect(Collectors.groupingBy(OverviewVO.Day::getDate));
-
-        List<OverviewVO.Day> mergedDays = new ArrayList<>();
-
-        for (Map.Entry<String, List<OverviewVO.Day>> entry : groupedDays.entrySet()) {
-            OverviewVO.Day mergedDay = new OverviewVO.Day();
-            mergedDay.setDate(entry.getKey());
-
-            List<OverviewVO.Usage> mergedUsages = entry.getValue().stream()
-                    .flatMap(day -> day.getUsages().stream())
-                    .collect(Collectors.toList());
-
-            mergedDay.setUsages(mergedUsages);
-            mergedDays.add(mergedDay);
-        }
+        Map<String, List<OverviewVO.Usage>> groupedUsages = days.stream()
+                .collect(Collectors.groupingBy(
+                        OverviewVO.Day::getDate,
+                        Collectors.flatMapping(
+                                day -> day.getUsages().stream(),
+                                Collectors.toList()
+                        )
+                ));
 
         OverviewVO overviewVO = new OverviewVO();
-        overviewVO.setOverview(mergedDays);
+        overviewVO.setOverview(groupedUsages.entrySet().stream()
+                .map(entry -> {
+                    OverviewVO.Day mergedDay = new OverviewVO.Day();
+                    mergedDay.setDate(entry.getKey());
+                    mergedDay.setUsages(entry.getValue());
+                    return mergedDay;
+                })
+                .collect(Collectors.toList())
+        );
 
         return overviewVO;
     }
-    private String builderSQL(findLogVO vo) {
+
+    private String builderSQL(FindLogVO vo) {
         StringBuilder sql = new StringBuilder("SELECT * FROM logs WHERE 1=1 ");
         if (vo.getChannelId() != null) {
             sql.append("AND channel_id = ").append(vo.getChannelId()).append(" ");
