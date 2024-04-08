@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hjong</groupId>
-    <artifactId>Achat</artifactId>
+    <artifactId>OnChat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Achat</name>
+    <name>OnChat</name>
     <description>Achat</description>
     <properties>
         <java.version>21</java.version>
@@ -33,7 +33,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
@@ -44,11 +47,6 @@
             <groupId>org.mariadb</groupId>
             <artifactId>r2dbc-mariadb</artifactId>
             <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
-            <version>6.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
