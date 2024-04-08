@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: OnChat
+  r2dbc:
+    url: ${R2DBC_URL}           #数据库连接地址
+    username: ${R2DBC_USERNAME} #数据库用户名
+    password: ${R2DBC_PASSWORD} #数据库密码
+  mail:
+    host: ${MAIL_HOST}         #邮件服务器地址
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME} #邮件用户名
+    password: ${MAIL_PASSWORD} #邮件密码
+logging:
+  level:
+    org.springframework.data.r2dbc: INFO
+
+chat:
+  proxy:
+    host: ${CHAT_PROXY_HOST}  #http代理地址
+    port: ${CHAT_PROXY_PORT}  #http代理地址端口
+  token:
+    secret: ${CHAT_TOKEN_SECRET:OnChat}  #token密钥
+    issuer: ${CHAT_TOKEN_ISSUER:OnChat}  #token签发者
+    expires-minute: ${CHAT_TOKEN_EXPIRES_MINUTE:43200} #token过期时间
+  channel:
+    strategy: ${Channel_Strategy:first}  #聊天通道策略
+
+
+
+

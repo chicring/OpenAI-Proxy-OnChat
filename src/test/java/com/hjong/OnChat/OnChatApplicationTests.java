@@ -15,13 +15,11 @@ import java.time.Instant;
 class OnChatApplicationTests {
 
 
-    @Resource
-    SparkCompletions sparkCompletions;
+
 
     @Test
-    void contextLoads() throws Exception {
+    void contextLoads(){
 
-        System.out.printf(sparkCompletions.getAuthUrl("https://spark-api.xf-yun.com/v3.5/chat", "18f83283ab018e7e001170745535099d", "YjJhMGQxMGY0NGExOWQ4OTAxZTU3MzYx"));
 
     }
 
