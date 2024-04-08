@@ -84,7 +84,7 @@ public class ChatLogAspect {
             log.info("输出: " + outputStr);
             log.info("耗时 {} 秒", (System.currentTimeMillis()-start)/ 1000.0);
             String token = request.getHeaders().getFirst("Authorization");
-            String[] parts = token.split("\\.");  // 注意，"." 是一个特殊字符，所以需要用 "\\." 来表示
+            String[] parts = token.split("\\.");  
             Integer userId = Integer.valueOf(parts[1]);
 
 
