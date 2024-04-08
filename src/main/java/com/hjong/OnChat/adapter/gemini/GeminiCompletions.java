@@ -36,7 +36,6 @@ public class GeminiCompletions extends Adapter {
     @Override
     protected Flux<String> streamCompletions(OpenAiRequestBody request, String url, String apikey, Boolean enableProxy) {
 
-
         return getWebClient(enableProxy).post()
                 .uri(this.endpoint(url, apikey, request.getModel(), true))
                 .bodyValue(GeminiRequestBody.builder(request))

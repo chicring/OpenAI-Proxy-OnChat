@@ -16,7 +16,7 @@ public class Constants {
 
     public static final String QWEN = "qwen";
 
-    public static final String GEMINI = "GEMINI";
+    public static final String GEMINI = "gemini";
 
     public static final String ZHIPU = "zhipu";
 
