@@ -39,10 +39,10 @@ jar部署：
 ```
 ## 预览
 
-![](\images\overview.png "概况")
-![](\images\apikey.png "API密钥")
-![](\images\channel.png "渠道")
-![](\images\logs.png "日志")
-![](\images\login.png "登录")
+<img src="/images/overview.png" title="概况"/>
+<img src="/images/apikey.png" title="API密钥"/>
+<img src="/images/channel.png" title="渠道"/>
+<img src="/images/logs.png" title="日志"/>
+<img src="/images/login.png" title="登录"/>
 
 
