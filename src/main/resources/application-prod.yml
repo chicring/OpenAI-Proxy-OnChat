@@ -5,6 +5,14 @@ spring:
     url: ${R2DBC_URL}           #数据库连接地址
     username: ${R2DBC_USERNAME} #数据库用户名
     password: ${R2DBC_PASSWORD} #数据库密码
+
+  sql:
+    init:
+      mode: always
+      platform: mariadb
+      schema-locations: classpath:/sql/schema.sql
+      data-locations: classpath:/sql/data.sql
+
   mail:
     host: ${MAIL_HOST}         #邮件服务器地址
     port: ${MAIL_PORT}
