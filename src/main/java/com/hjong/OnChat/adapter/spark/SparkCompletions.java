@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.hjong.OnChat.adapter.spark.SparkResponseBody.SparkToOpenAI;
+import static com.hjong.OnChat.entity.Constants.DONE;
 
 
 /**
@@ -96,15 +97,17 @@ public class SparkCompletions extends Adapter {
                                         .mapNotNull(message -> JsonUtil.parseObject(message.getPayloadAsText(), SparkResponseBody.class)))
                                 .doOnNext(response -> {
                                     if (response.getHeader().getStatus() == 2) {
-                                        sink.tryEmitNext("[DONE]");
+                                        sink.tryEmitNext(SparkToOpenAI(response, request.getModel()));
+                                        sink.tryEmitNext(DONE);
+                                        sink.tryEmitComplete();
                                     }else {
                                         sink.tryEmitNext(SparkToOpenAI(response, request.getModel()));
                                     }
                                 })
                                 .doFinally(signalType -> {
-                                    if (signalType.equals(reactor.core.publisher.SignalType.ON_COMPLETE) || signalType.equals(SignalType.ON_ERROR)) {
-                                        session.close();
+                                    if (signalType.equals(SignalType.ON_ERROR)) {
                                         sink.tryEmitComplete();
+                                        session.close();
                                     }
                                 })
                                 .then()).subscribe();

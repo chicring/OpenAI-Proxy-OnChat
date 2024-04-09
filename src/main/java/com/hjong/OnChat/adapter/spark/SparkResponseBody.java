@@ -80,6 +80,8 @@ public class SparkResponseBody {
         });
 
         openAiResponseBody.setChoices(choicesList);
+        openAiResponseBody.getChoices().getFirst().setIndex(0);
+        openAiResponseBody.getChoices().getFirst().setFinish_reason("stop");
         openAiResponseBody.setId(responseBody.getHeader().getSid());
         openAiResponseBody.setObject("chat.completion.chunk");
         openAiResponseBody.setCreated(Instant.now().getEpochSecond());
