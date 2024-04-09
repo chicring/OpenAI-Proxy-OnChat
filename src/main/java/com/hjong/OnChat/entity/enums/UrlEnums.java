@@ -18,7 +18,9 @@ public enum UrlEnums {
 
     TEXT_ZHIPU("zhipu","/api/paas/v4/chat/completions"),
 
-    TEXT_Ai360("ai360","/v1/chat/completions");
+    TEXT_Ai360("ai360","/v1/chat/completions"),
+
+    TEXT_MOONSHOT("moonshot","/v1/chat/completions");
 
 
 

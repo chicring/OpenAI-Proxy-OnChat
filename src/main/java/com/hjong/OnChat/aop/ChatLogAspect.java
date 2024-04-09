@@ -68,7 +68,9 @@ public class ChatLogAspect {
             if(requestBody.isStream()){
                 if (!json.equals(DONE)) {
                     JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
-                    output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
+                    if (jsonNode.get("choices").get(0).get("delta").has("content")) {
+                        output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
+                    }
                 }
             }else {
                 JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);

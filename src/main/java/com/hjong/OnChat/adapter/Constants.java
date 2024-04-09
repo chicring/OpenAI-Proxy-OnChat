@@ -20,4 +20,6 @@ public class Constants {
 
     public static final String ZHIPU = "zhipu";
 
+    public static final String MOONSHOT = "moonshot";
+
 }

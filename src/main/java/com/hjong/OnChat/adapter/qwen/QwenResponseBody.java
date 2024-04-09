@@ -59,7 +59,7 @@ public class QwenResponseBody {
         openAiResponseBody.setModel(model);
 
         openAiResponseBody.getChoices().getFirst().setIndex(0);
-        openAiResponseBody.getChoices().getFirst().setFinish_reason("stop");
+        openAiResponseBody.getChoices().getFirst().setFinish_reason(responseBody.getOutput().getFinish_reason());
 
         OpenAiResponseBody.Usage usage = new OpenAiResponseBody.Usage();
 
