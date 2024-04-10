@@ -39,12 +39,12 @@ public class CheckRoleWebFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return requestMapping.getHandler(exchange).switchIfEmpty(chain.filter(exchange))
                 .flatMap(handler -> {
-                            // 熟悉的味道，将handler转换成HandlerMethod
+
                             if (handler instanceof HandlerMethod methodHandle) {
                                 CheckRole permission = methodHandle.getMethodAnnotation(CheckRole.class);
 
                                 if (Objects.isNull(permission)) {
-                                    // handler 所有bean 上面寻找
+
                                     permission = AnnotationUtils.findAnnotation(methodHandle.getBeanType(), CheckRole.class);
                                 }
 

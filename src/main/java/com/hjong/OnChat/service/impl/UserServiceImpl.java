@@ -27,8 +27,10 @@ import static com.hjong.OnChat.entity.Constants.TEXT_MAIL;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Resource
     UserRepositories userRepositories;
+
     @Resource
     EmailService mailService;
 

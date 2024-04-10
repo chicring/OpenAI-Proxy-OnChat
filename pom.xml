@@ -12,7 +12,7 @@
     <artifactId>OnChat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>OnChat</name>
-    <description>Achat</description>
+    <description>OnChat</description>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -32,6 +32,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

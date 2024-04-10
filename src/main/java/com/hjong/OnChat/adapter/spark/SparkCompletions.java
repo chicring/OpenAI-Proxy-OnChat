@@ -96,6 +96,7 @@ public class SparkCompletions extends Adapter {
                                         .receive()
                                         .mapNotNull(message -> JsonUtil.parseObject(message.getPayloadAsText(), SparkResponseBody.class)))
                                 .doOnNext(response -> {
+                                    //判断是否完成
                                     if (response.getHeader().getStatus() == 2) {
                                         sink.tryEmitNext(SparkToOpenAI(response, request.getModel()));
                                         sink.tryEmitNext(DONE);

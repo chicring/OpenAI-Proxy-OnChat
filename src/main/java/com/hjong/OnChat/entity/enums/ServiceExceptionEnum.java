@@ -41,12 +41,18 @@ public enum ServiceExceptionEnum {
      * 无效的API Key
      */
     INVALID_API_KEY(401, "token验证失败"),
-
+    /**
+     * 权限不足
+     */
     PERMISSION_DENIED(403, "权限不足"),
     /**
      * 密码或账号错误
      */
     PASSWORD_ERROR(401, "密码或账号错误"),
+    /**
+     * 请求过于频繁
+     */
+    Too_Many_Requests(429, "请求过于频繁"),
     /**
      * 未知异常
      */

@@ -76,7 +76,6 @@ public class ChatLogAspect {
                 JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
                 output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
             }
-
         }).doOnCancel(() -> {
             log.info("流被取消");
         }).doOnComplete(() ->{
