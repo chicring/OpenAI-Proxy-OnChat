@@ -1,6 +1,7 @@
 package com.hjong.OnChat.service;
 
 import com.hjong.OnChat.entity.dto.User;
+import com.hjong.OnChat.entity.vo.req.EmailResetVO;
 import com.hjong.OnChat.entity.vo.req.UserLoginVO;
 import com.hjong.OnChat.entity.vo.req.UserRegisterVO;
 import com.hjong.OnChat.entity.vo.resp.UserInfoVO;
@@ -22,4 +23,5 @@ public interface UserService {
     Flux<User> findAll();
     Mono<Void> resetVerifyCode(String email);
 
+    Mono<Void> emailReset(EmailResetVO vo);
 }

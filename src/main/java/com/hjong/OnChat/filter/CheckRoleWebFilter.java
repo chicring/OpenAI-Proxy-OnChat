@@ -15,11 +15,10 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.rmi.ServerException;
 import java.util.Objects;
 
-import static com.hjong.OnChat.entity.Constants.ADMIN_ROLE;
-import static com.hjong.OnChat.entity.Constants.ROLE;
+import static com.hjong.OnChat.entity.Consts.ADMIN_ROLE;
+import static com.hjong.OnChat.entity.Consts.ROLE;
 
 /**
  * @author HJong

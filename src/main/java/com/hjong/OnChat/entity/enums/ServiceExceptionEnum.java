@@ -54,6 +54,10 @@ public enum ServiceExceptionEnum {
      */
     Too_Many_Requests(429, "请求过于频繁"),
     /**
+     *
+     */
+    CODE_ERROR(400, "验证码错误"),
+    /**
      * 未知异常
      */
     UNKNOWN_EXCEPTION(500, "未知异常");

@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
-import static com.hjong.OnChat.entity.Constants.*;
+import static com.hjong.OnChat.entity.Consts.*;
 
 /**
  * @author HJong

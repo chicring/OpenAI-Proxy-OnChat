@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static com.hjong.OnChat.entity.Constants.USER_ID;
+import static com.hjong.OnChat.entity.Consts.USER_ID;
 
 /**
  * @author HJong

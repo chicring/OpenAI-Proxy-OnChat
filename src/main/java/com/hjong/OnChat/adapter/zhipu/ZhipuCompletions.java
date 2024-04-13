@@ -2,14 +2,11 @@ package com.hjong.OnChat.adapter.zhipu;
 
 import com.hjong.OnChat.adapter.Adapter;
 import com.hjong.OnChat.adapter.openai.OpenAiRequestBody;
-import com.hjong.OnChat.entity.enums.ChannelType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
-import static com.hjong.OnChat.adapter.Constants.ZHIPU;
-import static com.hjong.OnChat.entity.enums.UrlEnums.getUrlByType;
+import static com.hjong.OnChat.adapter.Consts.ZHIPU;
 
 /**
  * @author HJong

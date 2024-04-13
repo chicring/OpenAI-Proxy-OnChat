@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,7 +25,16 @@ public class ProxyController {
 
     @CrossOrigin
     @PostMapping(value = "/v1/chat/completions")
-    public Publisher<String> Completions(@RequestBody OpenAiRequestBody requestBody, ServerWebExchange exchange) {
+    public Publisher<String> Completions(@RequestBody OpenAiRequestBody requestBody,
+                                         ServerWebExchange exchange)
+    {
+
+        ServerHttpRequest req = exchange.getRequest();
+        String token = req.getHeaders().getFirst("Authorization");
+        String[] parts = token.split("\\.");
+
+
+        exchange.getAttributes().put("userId",Integer.valueOf(parts[1]));
 
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
 

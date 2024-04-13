@@ -1,6 +1,7 @@
 package com.hjong.OnChat.controller;
 
 import com.hjong.OnChat.entity.Result;
+import com.hjong.OnChat.entity.vo.req.EmailResetVO;
 import com.hjong.OnChat.entity.vo.req.UserLoginVO;
 import com.hjong.OnChat.entity.vo.req.UserRegisterVO;
 import com.hjong.OnChat.entity.vo.resp.TokenInfoVO;
@@ -15,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.hjong.OnChat.entity.Constants.USER_ID;
+import static com.hjong.OnChat.entity.Consts.USER_ID;
 
 /**
  * @author HJong
@@ -66,8 +67,9 @@ public class UserController {
     }
 
     @PostMapping("/reset")
-    public Mono<Result<Void>> doUpdate(String username){
-        return null;
+    public Mono<Result<Void>> doUpdate(@Valid @RequestBody EmailResetVO vo){
+
+        return userService.emailReset(vo).then(Mono.just(Result.ok()));
     }
 
     @GetMapping("/ask-code")

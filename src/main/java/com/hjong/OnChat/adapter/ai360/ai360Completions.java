@@ -4,11 +4,9 @@ import com.hjong.OnChat.adapter.Adapter;
 import com.hjong.OnChat.adapter.openai.OpenAiRequestBody;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
-import static com.hjong.OnChat.adapter.Constants.AI_360;
-import static com.hjong.OnChat.adapter.Constants.ZHIPU;
+import static com.hjong.OnChat.adapter.Consts.AI_360;
 
 /**
  * @author HJong
@@ -25,7 +23,7 @@ public class ai360Completions extends Adapter {
         return getWebClient(enableProxy).post()
                 .uri(super.buildEndpoint(url, AI_360))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
-                .bodyValue(request)
+                .bodyValue(Ai360RequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class);
     }
@@ -36,7 +34,7 @@ public class ai360Completions extends Adapter {
         return getWebClient(enableProxy).post()
                 .uri(super.buildEndpoint(url, AI_360))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
-                .bodyValue(request)
+                .bodyValue(Ai360RequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class);
     }

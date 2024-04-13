@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.hjong.OnChat.adapter.spark.SparkResponseBody.SparkToOpenAI;
-import static com.hjong.OnChat.entity.Constants.DONE;
+import static com.hjong.OnChat.entity.Consts.DONE;
 
 
 /**

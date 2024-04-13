@@ -36,5 +36,20 @@ public class OpenAiResponseBody {
     public static class Message{
         private String role;
         private String content;
+        private List<Tool_calls> tool_calls;
+
+        @Data
+        public static class Tool_calls{
+            private Integer index;
+            private String id;
+            private String type;
+            private Function function;
+
+            @Data
+            public static class Function{
+                private String name;
+                private Object arguments;
+            }
+        }
     }
 }

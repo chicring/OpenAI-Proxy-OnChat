@@ -28,7 +28,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     KeyUtil keyUtil;
 
     @Override
-    public Mono<Void> validateKey(String apiKey) {
+    public Mono<Boolean> validateKey(String apiKey) {
 
         if (apiKey != null && apiKey.startsWith("Bearer ")) {
             apiKey = apiKey.substring(7);
@@ -36,7 +36,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
         return apiKeyRepositories.findByApiKey(apiKey)
                 .hasElement()
-                .flatMap(exists -> exists ? Mono.empty() : Mono.error(new ServiceException(ServiceExceptionEnum.INVALID_API_KEY)));
+                .flatMap(exists -> exists ? Mono.just(true) : Mono.just(false));
     }
 
     @Override

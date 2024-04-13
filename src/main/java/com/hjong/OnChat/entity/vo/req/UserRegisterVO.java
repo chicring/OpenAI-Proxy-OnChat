@@ -18,7 +18,7 @@ public class UserRegisterVO {
     private String username;
 
     @NotEmpty(message = "密码不能为空")
-    @Length(min = 5, max = 15, message = "密码应该在5-15个字符之间")
+    @Length(min = 5, max = 20, message = "密码应该在5-15个字符之间")
     private String password;
 
     @NotEmpty(message = "邮箱不能为空")

@@ -12,7 +12,7 @@ import java.util.List;
  **/
 public interface ApiKeyService {
 
-    Mono<Void> validateKey(String key);
+    Mono<Boolean> validateKey(String key);
 
     Mono<ApiKey> saveKey(String name, long exp, Integer userId);
 

@@ -6,8 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
-import static com.hjong.OnChat.adapter.Constants.MOONSHOT;
-import static com.hjong.OnChat.adapter.Constants.ZHIPU;
+import static com.hjong.OnChat.adapter.Consts.MOONSHOT;
 
 /**
  * @author HJong

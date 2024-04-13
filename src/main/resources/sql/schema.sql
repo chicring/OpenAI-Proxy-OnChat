@@ -69,4 +69,18 @@ create table IF NOT EXISTS logs
 
 create index IF NOT EXISTS idx_logs_created_at on logs (created_at);
 
+CREATE TABLE IF NOT EXISTS Model
+(
+    id     INT AUTO_INCREMENT PRIMARY KEY,
+    request_model VARCHAR(255) NOT NULL,
+    real_model VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    channel_id INT NOT NULL
+);
 
+CREATE TABLE IF NOT EXISTS ChannelPermission
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    channel_id INT NOT NULL
+);

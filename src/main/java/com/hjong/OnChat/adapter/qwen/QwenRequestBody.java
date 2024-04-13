@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static com.hjong.OnChat.adapter.Consts.OPEN_WEB_SEARCH;
+
 /**
  * @author HJong
  * @version 1.0
@@ -47,6 +49,7 @@ public class QwenRequestBody {
         private Integer max_tokens;
         private String incremental_output;
         private String stop;
+        private boolean enable_search;
     }
 
     public static QwenRequestBody builder(OpenAiRequestBody openAiRequestBody){
@@ -84,6 +87,11 @@ public class QwenRequestBody {
         }
 
         parameters.setStop(openAiRequestBody.getStop() == null ? "null" : openAiRequestBody.getStop());
+        // 如果有工具，开启联网搜索
+        if(openAiRequestBody.getModel().startsWith(OPEN_WEB_SEARCH)){
+            parameters.setEnable_search(true);
+            qwenRequestBody.setModel(openAiRequestBody.getModel().substring(4));
+        }
 
         qwenRequestBody.setParameters(parameters);
 

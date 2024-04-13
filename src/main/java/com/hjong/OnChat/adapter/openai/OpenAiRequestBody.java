@@ -3,6 +3,7 @@ package com.hjong.OnChat.adapter.openai;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author HJong
@@ -36,4 +37,21 @@ public class OpenAiRequestBody {
     private Integer top_k;
     private String stop;
     private Integer max_tokens;
+
+    List<Tools> tools;
+
+    private String tool_choice;
+
+    @Data
+    public static class Tools{
+        private String type;  //function | retrieval | web_search
+        private Function function;
+
+        @Data
+        public static class Function{
+            private String description;
+            private String name;
+            private Object parameters;
+        }
+    }
 }

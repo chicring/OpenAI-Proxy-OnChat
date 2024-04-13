@@ -81,6 +81,7 @@ public class GlobalErrorHandler  {
     public Mono<Result<Object>> exceptionHandler(Exception e) {
         log.error("异常类型 {}",e.getClass());
         log.error("异常信息 {}",e.getMessage());
+        log.error("异常信息 {}", (Object) e.getStackTrace());
         return Mono.just(Result.fail(e.getMessage()));
     }
 }

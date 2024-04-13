@@ -34,9 +34,7 @@ public class ChannelController {
     @GetMapping("/find")
     public Mono<Result<List<Channel>>> findAllChannel() {
         return channelService.findAll()
-                .flatMap( list -> {
-                    return Mono.just(Result.ok(list));
-                } );
+                .flatMap( list -> Mono.just(Result.ok(list)));
     }
 
     @PostMapping("/add")

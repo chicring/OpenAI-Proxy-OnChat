@@ -22,7 +22,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.Instant;
 import java.util.Objects;
 
-import static com.hjong.OnChat.entity.Constants.DONE;
+import static com.hjong.OnChat.entity.Consts.DONE;
 
 /**
  * @author HJong
@@ -47,7 +47,7 @@ public class ChatLogAspect {
 
     @Around("logPointCut()")
     public Flux<Object> aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("************************ Start ************************");
+
         long start = System.currentTimeMillis();
 
         OpenAiRequestBody requestBody = (OpenAiRequestBody) joinPoint.getArgs()[0];
@@ -62,8 +62,7 @@ public class ChatLogAspect {
         Flux<Object> result = (Flux<Object>) joinPoint.proceed();
 
         return result.doOnError(error -> {
-            log.info("************************目标方法异常以后************************");
-            log.info("error:" + error);
+            log.error("error: " + error);
         }).doOnNext(json -> {
             if(requestBody.isStream()){
                 if (!json.equals(DONE)) {
@@ -77,17 +76,15 @@ public class ChatLogAspect {
                 output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
             }
         }).doOnCancel(() -> {
-            log.info("流被取消");
+            log.warn("流被取消");
         }).doOnComplete(() ->{
             log.info("开始保存对话日志");
             String outputStr = output.toString();
             outputStr = outputStr.replace("\"", "");
             log.info("输出: " + outputStr);
             log.info("耗时 {} 秒", (System.currentTimeMillis()-start)/ 1000.0);
-            String token = request.getHeaders().getFirst("Authorization");
-            String[] parts = token.split("\\.");  
-            Integer userId = Integer.valueOf(parts[1]);
 
+            Integer userId = exchange.getAttribute("userId");
 
             Mono<Logs> saveLog = logService.saveLog(
                             new Logs()
@@ -103,7 +100,7 @@ public class ChatLogAspect {
                                     .setIp(Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress())
                     );
             saveLog.subscribeOn(Schedulers.boundedElastic()).subscribe();
-            log.info("************************ End ************************" + LINE_SEPARATOR);
+
         });
     }
 

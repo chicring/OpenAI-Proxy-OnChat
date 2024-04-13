@@ -52,7 +52,7 @@ public abstract class Adapter {
     public Flux<String> sendMessage(OpenAiRequestBody request, Channel channel, ServerWebExchange serverWebExchange){
 
 
-        validateAndSetParameters(request);
+//        validateAndSetParameters(request);
 
         log.debug("请求类型：{},请求站点：{}",channel.getType(),channel.getBaseUrl());
 
@@ -85,7 +85,9 @@ public abstract class Adapter {
         }
 
         //选择是否启用流式响应
-        return request.isStream() ? streamCompletions(request, channel.getBaseUrl(), channel.getApiKey(), channel.isEnableProxy()) : completions(request, channel.getBaseUrl(), channel.getApiKey(), channel.isEnableProxy());
+        return request.isStream() ?
+                streamCompletions(request, channel.getBaseUrl(), channel.getApiKey(), channel.isEnableProxy())
+                : completions(request, channel.getBaseUrl(), channel.getApiKey(), channel.isEnableProxy());
     }
 
     private void validateAndSetParameters(OpenAiRequestBody request) {

@@ -1,23 +1,27 @@
 package com.hjong.OnChat.service.impl;
 
-import com.hjong.OnChat.entity.dto.Mail;
 import com.hjong.OnChat.entity.dto.User;
+import com.hjong.OnChat.entity.vo.req.EmailResetVO;
 import com.hjong.OnChat.entity.vo.req.UserLoginVO;
 import com.hjong.OnChat.entity.vo.req.UserRegisterVO;
 import com.hjong.OnChat.entity.vo.resp.UserInfoVO;
 import com.hjong.OnChat.entity.enums.ServiceExceptionEnum;
 import com.hjong.OnChat.exception.ServiceException;
 import com.hjong.OnChat.repositories.UserRepositories;
-import com.hjong.OnChat.service.EmailService;
 import com.hjong.OnChat.service.UserService;
+import com.hjong.OnChat.util.EmailUtil;
 import jakarta.annotation.Resource;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+
+import java.time.Duration;
 import java.util.Random;
 
-import static com.hjong.OnChat.entity.Constants.TEXT_MAIL;
+import static com.hjong.OnChat.service.Consts.VERIFY_EMAIL_DATA;
+
 
 /**
  * @author HJong
@@ -32,7 +36,12 @@ public class UserServiceImpl implements UserService {
     UserRepositories userRepositories;
 
     @Resource
-    EmailService mailService;
+    EmailUtil emailUtil;
+
+    @Resource
+    ReactiveRedisTemplate<String,String> reactiveRedisTemplate;
+
+    private final long timeout = 180;
 
     @Override
     public Mono<User> findByNameOrEmail(UserLoginVO vo) {
@@ -96,6 +105,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+
     @Override
     public Mono<Void> resetVerifyCode(String email) {
         return this.existsAccount(email)
@@ -107,13 +117,27 @@ public class UserServiceImpl implements UserService {
                     int code = random.nextInt(899999) + 100000;
 
                     //存到redis
+                    return reactiveRedisTemplate.opsForValue()
+                            .set(VERIFY_EMAIL_DATA + email, String.valueOf(code), Duration.ofMinutes(3))
+                            .then(
+                                    //发送邮件
+                                    emailUtil.sendEmailVerifyCode(email, String.valueOf(code))
+                            );
 
-                    return mailService.sendEmail(new Mail("重置密码",
-                                    "您正在执行重置密码操作，验证码: "+code+"，有效时间3分钟，如非本人操作，请无视。",
-                                    email, TEXT_MAIL
-                            ));
                 });
     }
+
+    @Override
+    public Mono<Void> emailReset(EmailResetVO vo) {
+
+        return reactiveRedisTemplate.opsForValue()
+                .get(VERIFY_EMAIL_DATA + vo.getEmail())
+                .filter(code -> code.equals(vo.getCode()))
+                .switchIfEmpty(Mono.error(new ServiceException(ServiceExceptionEnum.CODE_ERROR)))
+                .flatMap(code -> userRepositories.updatePasswordByEmail(vo.getEmail(), vo.getPassword()))
+                .then(reactiveRedisTemplate.delete(vo.getEmail())).then();
+    }
+
 
     private Mono<Boolean> existsAccount(String account){
 

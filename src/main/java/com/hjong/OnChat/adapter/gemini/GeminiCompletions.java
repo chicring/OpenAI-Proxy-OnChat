@@ -3,11 +3,10 @@ package com.hjong.OnChat.adapter.gemini;
 import com.hjong.OnChat.adapter.Adapter;
 import com.hjong.OnChat.adapter.openai.OpenAiRequestBody;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
-import static com.hjong.OnChat.adapter.Constants.GEMINI;
-import static com.hjong.OnChat.entity.Constants.DONE;
+import static com.hjong.OnChat.adapter.Consts.GEMINI;
+import static com.hjong.OnChat.entity.Consts.DONE;
 import static com.hjong.OnChat.entity.enums.UrlEnums.getUrlByType;
 
 /**

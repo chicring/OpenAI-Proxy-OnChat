@@ -18,4 +18,6 @@ public interface UserRepositories extends R2dbcRepository<User,Integer> {
     @Query("select * from User where username = :account or email = :account")
     Mono<User> findByNameOrEmail(String account);
 
+    @Query("update User set password = :password where email = :email")
+    Mono<Void> updatePasswordByEmail(String email, String password);
 }

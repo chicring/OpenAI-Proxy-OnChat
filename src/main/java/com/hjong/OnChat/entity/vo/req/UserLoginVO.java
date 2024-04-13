@@ -18,7 +18,7 @@ public class UserLoginVO {
     @NotEmpty(message = "账号不能为空")
     String account;  //用户名或邮箱
 
-    @Length(min = 5, max = 15, message = "密码应该在5-15个字符之间")
+    @Length(min = 5, max = 20, message = "密码应该在5-15个字符之间")
     @NotEmpty(message = "密码不能为空")
     String pwd;
 }
