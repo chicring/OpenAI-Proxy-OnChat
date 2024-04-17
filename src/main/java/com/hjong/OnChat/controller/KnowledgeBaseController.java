@@ -3,6 +3,7 @@ package com.hjong.OnChat.controller;
 import com.hjong.OnChat.entity.Result;
 import com.hjong.OnChat.entity.dto.KnowledgeBase;
 import com.hjong.OnChat.entity.vo.req.KnowledgeBaseVO;
+import com.hjong.OnChat.entity.vo.req.KnowledgeUploadVO;
 import com.hjong.OnChat.filter.annotation.CheckRole;
 import com.hjong.OnChat.service.KnowledgeBaseService;
 import jakarta.annotation.Resource;
@@ -49,10 +50,9 @@ public class KnowledgeBaseController {
      */
     @CheckRole
     @PostMapping("/upload")
-    public Mono<Void> upload(){
-        return null;
+    public Mono<Result<String>> upload(KnowledgeUploadVO vo){
+
+        return knowledgeBaseService.upload(vo)
+                .then(Mono.just(Result.ok("上传成功,请等待处理")));
     }
-
-
-
 }
