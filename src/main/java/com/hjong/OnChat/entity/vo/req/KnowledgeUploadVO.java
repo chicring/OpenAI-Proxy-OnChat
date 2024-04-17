@@ -6,13 +6,13 @@ import org.springframework.http.codec.multipart.FilePart;
 /**
  * @author HJong
  * @version 1.0
- * @date 2024/4/15
+ * @date 2024/4/17
  **/
 
 @Data
-public class KnowledgeBaseVO {
-    private String name;
-    private String description;
-    private String collectionName;
-    private String fileName;
+public class KnowledgeUploadVO {
+
+    //知识库id
+    private Integer id;
+    private FilePart file;
 }

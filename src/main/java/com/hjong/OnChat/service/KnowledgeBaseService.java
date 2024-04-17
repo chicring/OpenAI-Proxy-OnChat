@@ -2,17 +2,18 @@ package com.hjong.OnChat.service;
 
 import com.hjong.OnChat.entity.dto.KnowledgeBase;
 import com.hjong.OnChat.entity.vo.req.KnowledgeBaseVO;
+import com.hjong.OnChat.entity.vo.req.KnowledgeUploadVO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
 
 /**
  * @author HJong
  * @version 1.0
  * @date 2024/4/14
  **/
-public interface knowledgeBaseService {
-
-
+public interface KnowledgeBaseService {
 
 
     /**
@@ -28,7 +29,7 @@ public interface knowledgeBaseService {
      * @param vo knowledge base id
      * @return knowledge base
      */
-    Mono<KnowledgeBase> save(KnowledgeBaseVO vo);
+    Mono<KnowledgeBase> save(KnowledgeBaseVO vo, Integer userId);
 
     /**
      * 删除知识库
@@ -45,4 +46,12 @@ public interface knowledgeBaseService {
      * @return knowledge base
      */
     Mono<Void> update(String vectorCollectionName, Integer status);
+
+    /**
+     * 上传文件到向量数据库
+     *
+     * @param vo 知识库文件
+     * @return knowledge base
+     */
+    Mono<Void> upload(KnowledgeUploadVO vo);
 }

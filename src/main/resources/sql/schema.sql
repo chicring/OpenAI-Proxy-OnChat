@@ -94,7 +94,7 @@ create table knowledgeBase
     update_time            datetime    default current_timestamp() not null on update current_timestamp() comment '修改时间',
     name                   varchar(50)                             not null comment '知识库名称',
     description            varchar(255)                            null comment '知识库描述',
-    vector_collection_name varchar(50)                             null comment '向量数据库的表名',
+    collection_name varchar(50)                             null comment '向量数据库的表名',
     status                 int         default 0                   not null comment '0向量处理中，2已完成，3失败',
     file_name              varchar(50) default ''                  not null
 )

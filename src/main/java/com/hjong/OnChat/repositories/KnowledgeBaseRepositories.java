@@ -15,6 +15,9 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface KnowledgeBaseRepositories extends R2dbcRepository<KnowledgeBase,Integer> {
 
-    @Query("update knowledgeBase set status = :status where vector_collection_name = :vectorCollectionName")
-    Mono<Void> updateStatusByVectorCollectionName(String vectorCollectionName, Integer status);
+    @Query("update knowledgeBase set status = :status where collection_name = :CollectionName")
+    Mono<Void> updateStatusByVectorCollectionName(String CollectionName, Integer status);
+
+
+    Mono<String> getCollectionNameById(Integer id);
 }

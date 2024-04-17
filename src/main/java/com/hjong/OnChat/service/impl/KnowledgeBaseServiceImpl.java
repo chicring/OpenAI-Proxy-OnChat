@@ -2,12 +2,16 @@ package com.hjong.OnChat.service.impl;
 
 import com.hjong.OnChat.entity.dto.KnowledgeBase;
 import com.hjong.OnChat.entity.vo.req.KnowledgeBaseVO;
+import com.hjong.OnChat.entity.vo.req.KnowledgeUploadVO;
 import com.hjong.OnChat.repositories.KnowledgeBaseRepositories;
-import com.hjong.OnChat.service.knowledgeBaseService;
+import com.hjong.OnChat.service.KnowledgeBaseService;
 import jakarta.annotation.Resource;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.InputStream;
 
 /**
  * @author HJong
@@ -16,7 +20,7 @@ import reactor.core.publisher.Mono;
  **/
 
 @Component
-public class knowledgeBaseServiceImpl implements knowledgeBaseService {
+public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
 
     @Resource
     KnowledgeBaseRepositories knowledgeBaseRepository;
@@ -27,11 +31,11 @@ public class knowledgeBaseServiceImpl implements knowledgeBaseService {
     }
 
     @Override
-    public Mono<KnowledgeBase> save(KnowledgeBaseVO vo) {
+    public Mono<KnowledgeBase> save(KnowledgeBaseVO vo, Integer userId) {
         KnowledgeBase knowledgeBase = new KnowledgeBase();
         knowledgeBase.setName(vo.getName());
-        knowledgeBase.setUserId(vo.getUserId());
-        knowledgeBase.setVectorCollectionName(vo.getVectorCollectionName());
+        knowledgeBase.setUserId(userId);
+        knowledgeBase.setCollectionName(vo.getCollectionName());
         knowledgeBase.setDescription(vo.getDescription());
         knowledgeBase.setStatus(0);
 
@@ -44,7 +48,22 @@ public class knowledgeBaseServiceImpl implements knowledgeBaseService {
     }
 
     @Override
-    public Mono<Void> update(String vectorCollectionName,Integer status) {
-        return knowledgeBaseRepository.updateStatusByVectorCollectionName(vectorCollectionName,status);
+    public Mono<Void> update(String CollectionName,Integer status) {
+        return knowledgeBaseRepository.updateStatusByVectorCollectionName(CollectionName,status);
     }
+
+
+    @Override
+    public Mono<Void> upload(KnowledgeUploadVO vo){
+        knowledgeBaseRepository.getCollectionNameById(vo.getId())
+                .flatMap(collectionName -> storeContent(vo.getFile(), collectionName))
+                .then();
+    }
+
+    private Mono<Void> storeContent(FilePart file, String collectionName) {
+
+
+        return Mono.empty();
+    }
+
 }

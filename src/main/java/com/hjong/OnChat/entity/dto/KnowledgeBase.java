@@ -20,7 +20,7 @@ public class KnowledgeBase {
     private Instant updateTime;
     private String name;
     private String description;
-    private String vectorCollectionName;
+    private String collectionName;
     private Integer status;
     private String fileName;
 }
