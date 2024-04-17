@@ -1,6 +1,7 @@
 package com.hjong.OnChat.chain.vectorizer;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -16,5 +17,12 @@ public interface Vectorization {
      * @param apikey API key
      * @return 返回文本列表的向量化结果
      */
-    public Flux<List<Double>> doVectorization(List<String> chunkList, String apikey);
+    Flux<List<Double>> doVectorization(List<String> chunkList, String apikey);
+
+    /**
+     * @param chunk 单个文本
+     * @param apikey API key
+     * @return 返回文本的向量化结果
+     */
+    Mono<List<Double>> singleVectorization(String chunk, String apikey);
 }

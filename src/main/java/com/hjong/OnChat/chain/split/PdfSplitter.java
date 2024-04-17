@@ -3,6 +3,7 @@ package com.hjong.OnChat.chain.split;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,26 +16,29 @@ import java.util.List;
 public class PdfSplitter implements Splitter{
 
 
-    private static final int MAX_LENGTH = 200;
+    private static final int MAX_LENGTH = 500;
 
     @Override
     public List<String> split(String content) {
-        String text = content.replaceAll("\\s", " ").replaceAll("(\\r\\n|\\r|\\n|\\n\\r)"," ");
+        String text = content.replaceAll("\\s+", " ").replaceAll("(\\r\\n|\\r|\\n|\\n\\r)", "");
         String[] sentences = text.split("。");
 
-        List<String> ans = new ArrayList<>();
-        for (String s : sentences) {
-            if (s.length() > MAX_LENGTH) {
-                for (int index = 0; index < s.length(); index += MAX_LENGTH) {
-                    String substring = s.substring(index, Math.min((index + MAX_LENGTH), s.length()));
-                    if(substring.length() < 5) continue;
-                    ans.add(substring);
-                }
-            } else {
-                if(s.length() < 5) continue;
-                ans.add(s);
-            }
-        }
-        return ans;
+        return Arrays.stream(sentences)
+                .filter(s -> s.length() >= 5 || s.contains("。"))
+                .map(s -> {
+                    if (s.length() > MAX_LENGTH) {
+                        List<String> substrings = new ArrayList<>();
+                        for (int index = 0; index < s.length(); index += MAX_LENGTH) {
+                            String substring = s.substring(index, Math.min((index + MAX_LENGTH), s.length()));
+                            substrings.add(substring);
+                        }
+                        return substrings;
+                    } else {
+                        return List.of(s);
+                    }
+                })
+                .flatMap(List::stream)
+                .toList();
     }
+
 }

@@ -9,5 +9,10 @@ import java.util.List;
  **/
 public interface Splitter {
 
+    /**
+     * 分割内容
+     * @param content 原始内容
+     * @return 分割后的内容
+     */
     List<String> split(String content);
 }

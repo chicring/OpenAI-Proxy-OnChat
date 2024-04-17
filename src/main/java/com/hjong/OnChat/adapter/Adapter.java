@@ -52,7 +52,7 @@ public abstract class Adapter {
     public Flux<String> sendMessage(OpenAiRequestBody request, Channel channel, ServerWebExchange serverWebExchange){
 
 
-//        validateAndSetParameters(request);
+        validateAndSetParameters(request);
 
         log.debug("请求类型：{},请求站点：{}",channel.getType(),channel.getBaseUrl());
 
@@ -92,15 +92,15 @@ public abstract class Adapter {
 
     private void validateAndSetParameters(OpenAiRequestBody request) {
         if(request.getTop_p() != null){
-            if (request.getTop_p() >= 1 || request.getTop_p() == 0.0) {
+            if (request.getTop_p() >= 1) {
                 request.setTop_p(0.7F);
             }
         }
-        if(request.getTemperature() != null){
-            if (request.getTemperature() >= 1 || request.getTemperature() == 0.0) {
-                request.setTemperature(0.95F);
-            }
-        }
+//        if(request.getTemperature() != null){
+//            if (request.getTemperature() >= 1 || request.getTemperature() == 0.0) {
+//                request.setTemperature(0.95F);
+//            }
+//        }
 
     }
 }

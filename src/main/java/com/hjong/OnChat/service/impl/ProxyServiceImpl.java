@@ -2,6 +2,7 @@ package com.hjong.OnChat.service.impl;
 
 import com.hjong.OnChat.adapter.Adapter;
 import com.hjong.OnChat.adapter.openai.OpenAiRequestBody;
+import com.hjong.OnChat.chain.retrieve.Retrieve;
 import com.hjong.OnChat.entity.dto.Channel;
 import com.hjong.OnChat.entity.enums.ServiceExceptionEnum;
 import com.hjong.OnChat.exception.ServiceException;
@@ -46,6 +47,11 @@ public class ProxyServiceImpl {
     @Resource
     private Map<String,Strategy> strategyMap;
 
+    @Resource
+    Retrieve retrieve;
+
+    String key = "eyJhbGciOiJIUzI1NiIsInNpZ25fdHlwZSI6IlNJR04ifQ.eyJhcGlfa2V5IjoiMmM5YWZkNjY4OTMzZDVmOWQ4MmJjNzRhNDVhZmViZGUiLCJleHAiOjE4Njg1MTE3MDYwMDAsInRpbWVzdGFtcCI6MTcxMDc0NTM3NjAwMH0.jFlrKDJNfX6pNh1_nqa-wJZb0TUFyLhJy5I-VAwhlHI";
+
     public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
         if (request.getMessages().isEmpty()){
@@ -61,20 +67,27 @@ public class ProxyServiceImpl {
 
         Integer userId = exchange.getAttribute("userId");
 
+        List<String> question = List.of(request.getMessages().getLast().getContent());
+
         return this.selectChannel(request.getModel(), userId)
-                .flatMapMany(channels -> {
+                .flatMap(channels -> {
                     if (channels.isEmpty()) {
                         log.warn("渠道不存在");
                         return Mono.error(new ServiceException(ServiceExceptionEnum.CHANNEL_NOT_EXIST));
                     }
                     Channel channel = strategyMap.get(channelStrategy).execute(channels);
+
                     if (enableWebSearch.get()){
                         channel.setModel(OPEN_WEB_SEARCH + channel.getModel());
                     }
 
-                    return selectorMap.get(channel.getType()).sendMessage(request, channel,exchange);
+                    return retrieve.retrieveknowledge(question, "javaGuide", key)
+                            .doOnNext(answer -> request.getMessages().getLast().setContent(answer))
+                            .doOnNext(answer -> log.debug("prompt：{}", answer))
+                            .thenReturn(channel);
 
-                });
+                })
+                .flatMapMany(channel -> selectorMap.get(channel.getType()).sendMessage(request, channel,exchange));
     }
 
     private Mono<List<Channel>> selectChannel(String requestModel, Integer userId){

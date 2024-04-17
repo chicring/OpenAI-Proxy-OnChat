@@ -6,6 +6,7 @@ import com.hjong.OnChat.util.FlowUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.PathContainer;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -40,8 +41,6 @@ public class FlowLimitingFilter implements WebFilter {
         PathPatternParser parser = new PathPatternParser();
         // 排除不需要要验证的路径
         this.excludePatterns = List.of(
-                parser.parse("/user/login"),
-                parser.parse("/user/register"),
                 parser.parse("/user/ask-code")
         );
     }
@@ -53,6 +52,11 @@ public class FlowLimitingFilter implements WebFilter {
         PathContainer requestPath = request.getPath().pathWithinApplication();
 
         boolean isExclude = excludePatterns.stream().anyMatch(pattern -> pattern.matches(requestPath));
+
+        if (request.getMethod() == HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
+
         if(!isExclude){
             log.debug("放行：{}",requestPath);
             return chain.filter(exchange);
