@@ -81,7 +81,7 @@ public class ProxyServiceImpl {
                         channel.setModel(OPEN_WEB_SEARCH + channel.getModel());
                     }
 
-                    return retrieve.retrieveknowledge(question, "javaGuide", key)
+                    return retrieve.retrieveknowledge(question, "tt", key)
                             .doOnNext(answer -> request.getMessages().getLast().setContent(answer))
                             .doOnNext(answer -> log.debug("prompt：{}", answer))
                             .thenReturn(channel);

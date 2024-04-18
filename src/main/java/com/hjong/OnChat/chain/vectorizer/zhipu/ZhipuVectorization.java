@@ -14,6 +14,7 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.hjong.OnChat.chain.vectorizer.Consts.ZHIPU_EMBEDDING_API;
 import static com.hjong.OnChat.chain.vectorizer.Consts.ZHIPU_EMBEDDING_MODEL;
@@ -33,8 +34,12 @@ public class ZhipuVectorization implements Vectorization {
 
     @Override
     public Flux<List<Double>> doVectorization(List<String> chunkList, String apikey) {
+        int size = chunkList.size();
+        log.info("需要请求数量：{}", size);
+        AtomicInteger i = new AtomicInteger();
 
         return Flux.fromIterable(chunkList)
+                .delayElements(Duration.ofSeconds(1))
                 .flatMap(chunk -> {
                     RequestBody requestBody = new RequestBody();
                     requestBody.setInput(chunk);
@@ -45,15 +50,15 @@ public class ZhipuVectorization implements Vectorization {
                             .bodyValue(requestBody)
                             .retrieve()
                             .bodyToMono(ResponseBody.class)
-                            .retryWhen(Retry.backoff(5, Duration.ofSeconds(1)))
-                            .doOnNext(responseBody -> log.info("请求消耗token：{}", responseBody.getUsage().getTotal_tokens()))
+                            .timeout(Duration.ofSeconds(60))
+                            .retryWhen(Retry.backoff(5, Duration.ofSeconds(3)))
+                            .doOnNext(responseBody -> log.info("进度：{} / {}, 消耗token：{}", i.getAndIncrement(), size ,responseBody.getUsage().getTotal_tokens()))
                             .map(responseBody -> responseBody.getData().getFirst().getEmbedding())
                             .onErrorResume(throwable -> {
                                 log.error("请求失败，重试中", throwable);
                                 return Mono.empty();
                             });
-                })
-                .limitRate(5,1000);
+                });
     }
 
     @Override

@@ -19,6 +19,4 @@ public interface ChannelRepositories extends R2dbcRepository<Channel,Integer> {
     @Query("SELECT *, JSON_VALUE(models, CONCAT('$.\"', :model, '\"')) as model FROM Channel HAVING model IS NOT NULL ORDER BY priority DESC")
     Flux<Channel> selectChannel(String model);
 
-
-    Mono<String> getApiKeyByType(String type);
 }

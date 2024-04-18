@@ -2,6 +2,7 @@ package com.hjong.OnChat.entity.vo.req;
 
 import lombok.Data;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author HJong

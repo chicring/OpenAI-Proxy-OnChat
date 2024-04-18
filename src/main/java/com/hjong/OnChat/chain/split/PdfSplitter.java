@@ -28,8 +28,8 @@ public class PdfSplitter implements Splitter{
                 .map(s -> {
                     if (s.length() > MAX_LENGTH) {
                         List<String> substrings = new ArrayList<>();
-                        for (int index = 0; index < s.length(); index += MAX_LENGTH) {
-                            String substring = s.substring(index, Math.min((index + MAX_LENGTH), s.length()));
+                        for (int index = 0; index < s.length(); index = (index + 1) * MAX_LENGTH) {
+                            String substring = s.substring(index, MAX_LENGTH);
                             substrings.add(substring);
                         }
                         return substrings;
