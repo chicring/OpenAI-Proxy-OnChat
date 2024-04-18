@@ -49,8 +49,11 @@ class OnChatApplicationTests {
 
         List<String> chunkList = resourseLoaderFactory.getLoader("pdf").getChunkList(content);
         System.out.println("chunkList.size() = " + chunkList.size());
-        System.out.println(chunkList.getFirst());
-        chunkList.forEach(System.out::println);
+        chunkList.forEach(s -> {
+            if (s.length() > 500) {
+                System.out.println(s);
+            }
+        });
 //        System.out.println("转换耗时: " + (System.currentTimeMillis()-start)/ 1000.0);
 //
 //        List<List<Double>> v = vectorizationFactory.getEmbedding("zhipu").doVectorization(chunkList,key);

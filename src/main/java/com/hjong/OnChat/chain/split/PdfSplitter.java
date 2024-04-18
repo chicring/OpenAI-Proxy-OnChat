@@ -16,7 +16,7 @@ import java.util.List;
 public class PdfSplitter implements Splitter{
 
 
-    private static final int MAX_LENGTH = 500;
+    private static final int MAX_LENGTH = 300;
 
     @Override
     public List<String> split(String content) {
@@ -24,13 +24,18 @@ public class PdfSplitter implements Splitter{
         String[] sentences = text.split("。");
 
         return Arrays.stream(sentences)
-                .filter(s -> s.length() >= 5 || s.contains("。"))
+                .filter(s -> s.length() >= 5 || s.contains("。") && !s.trim().isEmpty())
                 .map(s -> {
                     if (s.length() > MAX_LENGTH) {
                         List<String> substrings = new ArrayList<>();
-                        for (int index = 0; index < s.length(); index = (index + 1) * MAX_LENGTH) {
-                            String substring = s.substring(index, MAX_LENGTH);
-                            substrings.add(substring);
+                        int index = 0;
+                        while (index < s.length()) {
+                            int end = Math.min(index + MAX_LENGTH, s.length());
+                            String substring = s.substring(index, end);
+                            if (!substring.trim().isEmpty()){
+                                substrings.add(substring);
+                            }
+                            index = end;
                         }
                         return substrings;
                     } else {

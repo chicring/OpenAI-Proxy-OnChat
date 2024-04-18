@@ -25,6 +25,11 @@ public enum ServiceExceptionEnum {
      * 用户不存在
      */
     USER_NOT_EXIST(404, "用户不存在"),
+
+    /**
+     * 知识库不存在
+     */
+    KNOWLEDGE_BASE_NOT_EXIST(404, "知识库不存在"),
     /**
      * 渠道不存在
      */

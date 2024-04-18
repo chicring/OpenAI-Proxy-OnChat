@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS ChannelPermission
     channel_id INT NOT NULL
 );
 
-create table knowledgeBase
+create TABLE IF NOT EXISTS knowledgeBase
 (
     id                     int auto_increment comment '知识库id'
         primary key,
@@ -95,7 +95,18 @@ create table knowledgeBase
     name                   varchar(50)                             not null comment '知识库名称',
     description            varchar(255)                            null comment '知识库描述',
     collection_name varchar(50)                             null comment '向量数据库的表名',
-    status                 int         default 0                   not null comment '0向量处理中，2已完成，3失败',
+    status                 int         default 0                   not null comment '0向量处理中，1已完成，2失败',
     file_name              varchar(50) default ''                  not null
 )
     comment '知识库总表';
+
+create TABLE IF NOT EXISTS Files
+(
+    id                     int auto_increment comment '文件id' primary key,
+    create_time            datetime    default current_timestamp() not null comment '创建时间',
+    update_time            datetime    default current_timestamp() not null on update current_timestamp() comment '修改时间',
+    name                   varchar(50)                             not null comment '文件名',
+    status                 int         default 0                   not null comment '0向量处理中，1已完成，2失败',
+    knowledgeBase_id       int                                     not null comment '知识库id'
+)
+    comment '知识库文件表';

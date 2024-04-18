@@ -14,5 +14,4 @@ public class KnowledgeBaseVO {
     private String name;
     private String description;
     private String collectionName;
-    private String fileName;
 }

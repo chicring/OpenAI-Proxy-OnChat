@@ -1,5 +1,6 @@
 package com.hjong.OnChat.service;
 
+import com.hjong.OnChat.entity.dto.File;
 import com.hjong.OnChat.entity.dto.KnowledgeBase;
 import com.hjong.OnChat.entity.vo.req.KnowledgeBaseVO;
 import com.hjong.OnChat.entity.vo.req.KnowledgeUploadVO;
@@ -23,6 +24,12 @@ public interface KnowledgeBaseService {
      */
     Flux<KnowledgeBase> find();
 
+    /**
+     * 查询所有的文件
+     *
+     * @return knowledge base list
+     */
+    Flux<File> findFile(Integer knowledgeBaseId);
     /**
      * 增加知识库
      *

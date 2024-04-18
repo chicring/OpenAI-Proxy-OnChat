@@ -9,18 +9,17 @@ import java.time.Instant;
 /**
  * @author HJong
  * @version 1.0
- * @date 2024/4/14
+ * @date 2024/4/18
  **/
 
-@Table("knowledgeBase")
+@Table("Files")
 @Data
-public class KnowledgeBase {
+public class File {
     @Id
     private Integer id;
-    private Integer userId;
     private Instant createTime;
     private Instant updateTime;
     private String name;
-    private String description;
-    private String collectionName;
+    private Integer status;
+    private Integer knowledgeBaseId;
 }

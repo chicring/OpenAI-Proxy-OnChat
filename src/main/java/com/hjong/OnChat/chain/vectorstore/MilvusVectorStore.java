@@ -21,10 +21,12 @@ import io.milvus.response.SearchResultsWrapper;
 
 import jakarta.annotation.PostConstruct;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,7 @@ import static io.milvus.param.Constant.INDEX_TYPE;
  * @version 1.0
  * @date 2024/4/14
  **/
-
+@Slf4j
 @Component
 public class MilvusVectorStore implements VectorStore {
 
@@ -61,7 +63,7 @@ public class MilvusVectorStore implements VectorStore {
         );
     }
 
-    private void createCollection(String collectionName) {
+    public void createCollection(String collectionName) {
 
         FieldType primaryField = FieldType.newBuilder()
                 .withName("id")
@@ -69,6 +71,12 @@ public class MilvusVectorStore implements VectorStore {
                 .withDataType(DataType.Int64)
                 .withPrimaryKey(true)
                 .withAutoID(true)
+                .build();
+
+        FieldType fileField = FieldType.newBuilder()
+                .withName("fid")
+                .withDescription("文件id")
+                .withDataType(DataType.Int64)
                 .build();
 
         FieldType contentWordCountField = FieldType.newBuilder()
@@ -93,6 +101,7 @@ public class MilvusVectorStore implements VectorStore {
                         .withCollectionName(collectionName)
                         .withShardsNum(2)
                         .addFieldType(primaryField)
+                        .addFieldType(fileField)
                         .addFieldType(contentWordCountField)
                         .addFieldType(contentField)
                         .addFieldType(vectorField)
@@ -108,11 +117,19 @@ public class MilvusVectorStore implements VectorStore {
                         .withSyncMode(Boolean.FALSE)
                         .build()
         );
+
     }
 
     @Override
-    public void storeEmbeddings(List<String> chunkList, List<List<Double>> vectorList, String collectionName) {
-        createCollection(collectionName);
+    public void storeEmbeddings(List<String> chunkList, List<List<Double>> vectorList,
+                                String collectionName, Integer fileId) {
+
+        log.debug("字符数组长度：{}, 向量数字长度: {}",chunkList.size(),vectorList.size());
+
+        if(chunkList.size() != vectorList.size()) {
+            log.error("字符数组长度与向量数组长度不一致");
+            return;
+        }
 
         List<Integer> contentWordCount = chunkList.stream()
                 .map(String::length)
@@ -124,8 +141,10 @@ public class MilvusVectorStore implements VectorStore {
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-
+        List<Long> fileIdList = new ArrayList<>(Collections.nCopies(chunkList.size(), fileId.longValue()));
         List<InsertParam.Field> fields = new ArrayList<>();
+
+        fields.add(new InsertParam.Field("fid", fileIdList));
         fields.add(new InsertParam.Field("content", chunkList));
         fields.add(new InsertParam.Field("content_word_count", contentWordCount));
         fields.add(new InsertParam.Field("vector", vectorFloatList));
@@ -135,7 +154,12 @@ public class MilvusVectorStore implements VectorStore {
                 .withFields(fields)
                 .build();
 
-        milvusServiceClient.insert(insertParam);
+        try {
+            milvusServiceClient.insert(insertParam);
+            log.info("向量存储成功");
+        }catch (Exception e){
+            log.error("向量存储失败",e);
+        }
     }
 
     @Override

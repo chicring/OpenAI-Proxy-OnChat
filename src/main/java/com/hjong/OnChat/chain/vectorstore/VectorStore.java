@@ -9,6 +9,10 @@ import java.util.List;
  **/
 public interface VectorStore {
 
+
+
+    void createCollection(String collectionName);
+
     /**
      * Store embeddings.
      *
@@ -16,7 +20,7 @@ public interface VectorStore {
      * @param vectorList  向量list
      * @param collectionName 向量集合名称
      */
-    void storeEmbeddings(List<String> chunkList, List<List<Double>> vectorList, String collectionName);
+    void storeEmbeddings(List<String> chunkList, List<List<Double>> vectorList, String collectionName, Integer fileId);
 
     List<List<String>> nearest(List<List<Double>> queryVectorsList,String collectionName);
 }

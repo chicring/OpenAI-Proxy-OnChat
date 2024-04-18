@@ -10,7 +10,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +35,9 @@ public class ZhipuVectorization implements Vectorization {
     public Flux<List<Double>> doVectorization(List<String> chunkList, String apikey) {
         int size = chunkList.size();
         log.info("需要请求数量：{}", size);
-        AtomicInteger i = new AtomicInteger();
+        AtomicInteger i = new AtomicInteger(1);
 
         return Flux.fromIterable(chunkList)
-                .delayElements(Duration.ofSeconds(1))
                 .flatMap(chunk -> {
                     RequestBody requestBody = new RequestBody();
                     requestBody.setInput(chunk);
@@ -50,15 +48,16 @@ public class ZhipuVectorization implements Vectorization {
                             .bodyValue(requestBody)
                             .retrieve()
                             .bodyToMono(ResponseBody.class)
-                            .timeout(Duration.ofSeconds(60))
-                            .retryWhen(Retry.backoff(5, Duration.ofSeconds(3)))
+                            .retryWhen(Retry.backoff(5, Duration.ofSeconds(2))
+                                    .maxBackoff(Duration.ofSeconds(5))
+                                    .jitter(0.5))
                             .doOnNext(responseBody -> log.info("进度：{} / {}, 消耗token：{}", i.getAndIncrement(), size ,responseBody.getUsage().getTotal_tokens()))
                             .map(responseBody -> responseBody.getData().getFirst().getEmbedding())
                             .onErrorResume(throwable -> {
-                                log.error("请求失败，重试中", throwable);
-                                return Mono.empty();
+                                log.error("请求失败，重试中: {}", throwable.getMessage());
+                                return Mono.error(throwable);
                             });
-                });
+                },5);
     }
 
     @Override
@@ -67,4 +66,5 @@ public class ZhipuVectorization implements Vectorization {
         chunkList.add(chunk);
         return doVectorization(chunkList, apikey).single();
     }
+
 }
