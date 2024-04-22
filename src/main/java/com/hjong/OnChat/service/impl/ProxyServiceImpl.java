@@ -6,13 +6,10 @@ import com.hjong.OnChat.chain.retrieve.Retrieve;
 import com.hjong.OnChat.entity.dto.Channel;
 import com.hjong.OnChat.entity.enums.ServiceExceptionEnum;
 import com.hjong.OnChat.exception.ServiceException;
-import com.hjong.OnChat.repositories.ApiKeyRepositories;
-import com.hjong.OnChat.service.ChannelService;
 import com.hjong.OnChat.util.loadBalance.Strategy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
@@ -50,7 +47,7 @@ public class ProxyServiceImpl {
     @Resource
     Retrieve retrieve;
 
-    String key = "eyJhbGciOiJIUzI1NiIsInNpZ25fdHlwZSI6IlNJR04ifQ.eyJhcGlfa2V5IjoiMmM5YWZkNjY4OTMzZDVmOWQ4MmJjNzRhNDVhZmViZGUiLCJleHAiOjE4Njg1MTE3MDYwMDAsInRpbWVzdGFtcCI6MTcxMDc0NTM3NjAwMH0.jFlrKDJNfX6pNh1_nqa-wJZb0TUFyLhJy5I-VAwhlHI";
+    String key = "cb53a1f331daeb473e70ef6523887b5b.kl4IZMOA5NXxSeXH";
 
     public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
@@ -69,6 +66,12 @@ public class ProxyServiceImpl {
 
         List<String> question = List.of(request.getMessages().getLast().getContent());
 
+        String collectionName = getCollectionName(request.getModel());
+
+        if (collectionName != null){
+            request.setModel(request.getModel().substring(0, request.getModel().lastIndexOf('&')));
+        }
+
         return this.selectChannel(request.getModel(), userId)
                 .flatMap(channels -> {
                     if (channels.isEmpty()) {
@@ -81,14 +84,18 @@ public class ProxyServiceImpl {
                         channel.setModel(OPEN_WEB_SEARCH + channel.getModel());
                     }
 
-                    return retrieve.retrieveknowledge(question, "tt", key)
-                            .doOnNext(answer -> request.getMessages().getLast().setContent(answer))
-                            .doOnNext(answer -> log.debug("prompt：{}", answer))
-                            .thenReturn(channel);
-
+                    if(collectionName != null){
+                        return retrieve.retrieveKnowledge(question, collectionName, key)
+                                .doOnNext(answer -> request.getMessages().getLast().setContent(answer))
+                                .doOnNext(answer -> log.debug("prompt：{}", answer))
+                                .thenReturn(channel);
+                    }else{
+                        return Mono.just(channel);
+                    }
                 })
                 .flatMapMany(channel -> selectorMap.get(channel.getType()).sendMessage(request, channel,exchange));
     }
+
 
     private Mono<List<Channel>> selectChannel(String requestModel, Integer userId){
         String sql = "SELECT c.id, c.name, c.type, c.api_key, c.base_url, c.priority, c.enable_proxy, m.real_model " +
@@ -116,4 +123,15 @@ public class ProxyServiceImpl {
                 }).all().collectList();
 
     }
+
+    private String getCollectionName(String model){
+        String[] split = model.split("&");
+        String collectionName = split[split.length - 1];
+        if (collectionName.equals(model)){
+            return null;
+        } else {
+            return collectionName;
+        }
+    }
+
 }

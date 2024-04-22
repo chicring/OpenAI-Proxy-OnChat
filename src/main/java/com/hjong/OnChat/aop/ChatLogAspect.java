@@ -34,8 +34,6 @@ import static com.hjong.OnChat.entity.Consts.DONE;
 @Component
 public class ChatLogAspect {
 
-    /** 换行符 */
-    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     @Resource
     LogService logService;

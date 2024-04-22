@@ -21,4 +21,7 @@ public interface FileRepositories extends R2dbcRepository<File,Integer> {
 
 
     Flux<File> findByKnowledgeBaseId(Integer knowledgeBaseId);
+
+
+    Mono<Void> deleteByKnowledgeBaseId(Integer knowledgeBaseId);
 }

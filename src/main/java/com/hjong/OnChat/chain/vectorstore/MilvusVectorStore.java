@@ -8,10 +8,8 @@ import io.milvus.param.ConnectParam;
 import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
 import io.milvus.param.R;
-import io.milvus.param.collection.CreateCollectionParam;
-import io.milvus.param.collection.FieldType;
-import io.milvus.param.collection.LoadCollectionParam;
-import io.milvus.param.collection.ReleaseCollectionParam;
+import io.milvus.param.collection.*;
+import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.SearchParam;
 import io.milvus.param.index.CreateIndexParam;
@@ -87,7 +85,7 @@ public class MilvusVectorStore implements VectorStore {
         FieldType contentField = FieldType.newBuilder()
                 .withName("content")
                 .withDataType(DataType.VarChar)
-                .withMaxLength(1000)
+                .withMaxLength(2000)
                 .build();
 
         FieldType vectorField = FieldType.newBuilder()
@@ -214,4 +212,25 @@ public class MilvusVectorStore implements VectorStore {
         );
         return resultlist;
     }
+
+    @Override
+    public void deleteCollection(String collectionName) {
+        milvusServiceClient.dropCollection(
+                DropCollectionParam.newBuilder()
+                        .withCollectionName(collectionName)
+                        .build()
+        );
+    }
+
+    @Override
+    public void deleteByFidAndCollectionName(String collectionName, Integer fileId) {
+        milvusServiceClient.delete(
+                DeleteParam.newBuilder()
+                        .withCollectionName(collectionName)
+                        .withExpr("fid == " + fileId)
+                        .build()
+        );
+    }
+
+
 }

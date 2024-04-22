@@ -31,7 +31,7 @@ public class Retrieve {
     PromptTemplate promptTemplate;
 
 
-    public Mono<String> retrieveknowledge(List<String> question, String collectionName, String key){
+    public Mono<String> retrieveKnowledge(List<String> question, String collectionName, String key){
 
         return vectorizationFactory.getEmbedding("zhipu")
                 .doVectorization(question,key)

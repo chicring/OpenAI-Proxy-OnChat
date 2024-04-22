@@ -16,7 +16,7 @@ import java.util.List;
 public class PdfSplitter implements Splitter{
 
 
-    private static final int MAX_LENGTH = 300;
+    private static final int MAX_LENGTH = 500;
 
     @Override
     public List<String> split(String content) {

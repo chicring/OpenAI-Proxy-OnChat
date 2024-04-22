@@ -47,6 +47,14 @@ public interface KnowledgeBaseService {
     Mono<Void> delete(Integer id);
 
     /**
+     * 删除文件
+     *
+     * @param fid knowledge base id
+     * @return knowledge base
+     */
+    Mono<Void> deleteFile(String collectionName,Integer fid);
+
+    /**
      * 更新知识库状态 0 向量处理中，1 已完成 2 失败
      *
      * @param vectorCollectionName knowledge base id

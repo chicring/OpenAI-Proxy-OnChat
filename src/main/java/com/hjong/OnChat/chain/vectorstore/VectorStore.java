@@ -22,5 +22,16 @@ public interface VectorStore {
      */
     void storeEmbeddings(List<String> chunkList, List<List<Double>> vectorList, String collectionName, Integer fileId);
 
+    /**
+     * Store embeddings.
+     *
+     * @param queryVectorsList 查询向量list
+     * @param collectionName 向量集合名称
+     */
     List<List<String>> nearest(List<List<Double>> queryVectorsList,String collectionName);
+
+
+    void deleteCollection(String collectionName);
+
+    void deleteByFidAndCollectionName(String collectionName, Integer fileId);
 }

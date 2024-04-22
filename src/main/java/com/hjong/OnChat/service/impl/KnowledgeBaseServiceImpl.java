@@ -21,6 +21,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -82,10 +83,23 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
         return knowledgeBaseRepository.save(knowledgeBase);
     }
 
+    @Transactional
     @Override
     public Mono<Void> delete(Integer id) {
-        return null;
+        return knowledgeBaseRepository.deleteById(id)
+                .then(fileRepositories.deleteByKnowledgeBaseId(id));
     }
+
+    @Override
+    @Transactional
+    public Mono<Void> deleteFile(String collectionName, Integer fid) {
+        Mono<Void> deleteFromDb = fileRepositories.deleteById(fid);
+        Mono<Void> deleteFromMilvus = Mono.defer(() ->
+                Mono.fromRunnable(() -> milvusVectorStore.deleteByFidAndCollectionName(collectionName, fid))
+        );
+        return deleteFromDb.then(deleteFromMilvus);
+    }
+
 
     @Override
     public Mono<Void> update(String fileName,Integer status) {

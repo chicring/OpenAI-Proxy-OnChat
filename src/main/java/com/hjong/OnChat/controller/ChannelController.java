@@ -2,10 +2,12 @@ package com.hjong.OnChat.controller;
 
 import com.hjong.OnChat.entity.dto.Channel;
 import com.hjong.OnChat.entity.Result;
+import com.hjong.OnChat.entity.dto.Model;
 import com.hjong.OnChat.entity.vo.req.AddChannelVO;
 import com.hjong.OnChat.entity.vo.req.UpdateChannelVO;
 import com.hjong.OnChat.filter.annotation.CheckRole;
 import com.hjong.OnChat.service.ChannelService;
+import com.hjong.OnChat.service.ModelService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,8 @@ public class ChannelController {
     @Resource
     ChannelService channelService;
 
+    @Resource
+    ModelService modelService;
 
     @GetMapping("/find")
     public Mono<Result<List<Channel>>> findAllChannel() {
@@ -51,4 +55,13 @@ public class ChannelController {
     public Mono<Result<Void>> updateChannel(@RequestBody UpdateChannelVO vo) {
         return channelService.updateChannel(vo).thenReturn(Result.ok("更新成功"));
     }
+
+
+    @GetMapping("/model/find")
+    public Mono<Result<List<Model>>> findAllModel() {
+        return modelService.findAll()
+                .collectList()
+                .flatMap( list -> Mono.just(Result.ok(list)));
+    }
+
 }

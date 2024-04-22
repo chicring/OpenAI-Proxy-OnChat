@@ -28,7 +28,6 @@ import static com.hjong.OnChat.entity.enums.UrlEnums.getUrlByType;
 @Slf4j
 public abstract class Adapter {
 
-
     @Resource
     private WebClient webClient;
 

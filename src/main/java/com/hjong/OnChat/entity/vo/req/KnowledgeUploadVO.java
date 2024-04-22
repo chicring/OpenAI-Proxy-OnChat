@@ -15,5 +15,6 @@ public class KnowledgeUploadVO {
 
     //知识库id
     private Integer id;
+
     private FilePart file;
 }
