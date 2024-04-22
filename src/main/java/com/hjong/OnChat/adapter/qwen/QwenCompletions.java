@@ -29,6 +29,7 @@ public class QwenCompletions extends Adapter {
                 .bodyValue(QwenRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(QwenResponseBody.class)
+                .retry(3)
                 .flatMap(response -> QwenToOpenAI(response,request.getModel()));
     }
 
@@ -42,6 +43,7 @@ public class QwenCompletions extends Adapter {
                 .bodyValue(QwenRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(QwenResponseBody.class)
+                .retry(3)
                 .flatMap(response -> QwenToOpenAI(response,request.getModel()))
                 .concatWithValues(DONE);
     }

@@ -25,7 +25,8 @@ public class ZhipuCompletions extends Adapter {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .retry(3);
     }
 
     @Override
@@ -36,7 +37,8 @@ public class ZhipuCompletions extends Adapter {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .retry(3);
     }
 
 }

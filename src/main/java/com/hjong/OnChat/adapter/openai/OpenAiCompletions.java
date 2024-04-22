@@ -25,6 +25,7 @@ public class OpenAiCompletions extends Adapter {
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(String.class)
+                .retry(3)
                 .flux();
     }
 
@@ -36,7 +37,8 @@ public class OpenAiCompletions extends Adapter {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .retry(3);
     }
 
 

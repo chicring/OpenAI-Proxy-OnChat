@@ -25,7 +25,8 @@ public class ai360Completions extends Adapter {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
                 .bodyValue(Ai360RequestBody.builder(request))
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .retry(3);
     }
 
     @Override
@@ -36,6 +37,7 @@ public class ai360Completions extends Adapter {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
                 .bodyValue(Ai360RequestBody.builder(request))
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToFlux(String.class)
+                .retry(3);
     }
 }

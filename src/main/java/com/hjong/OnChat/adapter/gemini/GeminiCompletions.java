@@ -27,6 +27,7 @@ public class GeminiCompletions extends Adapter {
                 .bodyValue(GeminiRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class)
+                .retry(3)
                 .filter((str) -> str.contains("text"))
                 .flatMap(GeminiResponseBody::GeminiToOpenAI);
     }
@@ -40,6 +41,7 @@ public class GeminiCompletions extends Adapter {
                 .bodyValue(GeminiRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class)
+                .retry(3)
                 .filter((str) -> str.contains("text"))
                 .flatMap(GeminiResponseBody::GeminiToOpenAI)
                 .concatWithValues(DONE);

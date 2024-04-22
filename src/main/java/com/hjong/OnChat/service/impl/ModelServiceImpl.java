@@ -4,6 +4,7 @@ import com.hjong.OnChat.entity.dto.Model;
 import com.hjong.OnChat.repositories.ModelRepository;
 import com.hjong.OnChat.service.ModelService;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 /**
@@ -11,6 +12,7 @@ import reactor.core.publisher.Flux;
  * @version 1.0
  * @date 2024/4/13
  **/
+@Service
 public class ModelServiceImpl implements ModelService {
 
     @Resource
