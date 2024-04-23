@@ -44,7 +44,7 @@ public class OpenAiRequestBody {
 
     @Data
     public static class Tools{
-        private String type;  //function | retrieval | web_search
+        private String type;  //function
         private Function function;
 
         @Data

@@ -25,6 +25,7 @@ public class ZhiPuRequestBody {
     public static class Message{
         private String role;
         private String content;
+        private String tool_call_id;
     }
 
     private boolean stream;
@@ -101,6 +102,8 @@ public class ZhiPuRequestBody {
                     }).toList();
             zhiPuRequestBody.setTools(tools);
         }
+
+
         if (openAiRequestBody.getModel().startsWith(OPEN_WEB_SEARCH)){
             Map<String, Object> search_tool = new HashMap<>();
             search_tool.put(TOOL_TYPE, TOOL_WEB_SEARCH);

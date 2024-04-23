@@ -62,17 +62,21 @@ public class ChatLogAspect {
         return result.doOnError(error -> {
             log.error("error: " + error);
         }).doOnNext(json -> {
-            if(requestBody.isStream()){
-                if (!json.equals(DONE)) {
-                    JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
-                    if (jsonNode.get("choices").get(0).get("delta").has("content")) {
-                        output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
-                    }
-                }
+            JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
+            if(jsonNode.get("choices").get(0).get("finish_reason").toString().equals("tool_calls")){
+                log.info("工具调用");
             }else {
-                JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
-                output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
+                if(requestBody.isStream()){
+                    if (!json.equals(DONE)) {
+                        if (jsonNode.get("choices").get(0).get("delta").has("content")) {
+                            output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
+                        }
+                    }
+                }else {
+                    output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
+                }
             }
+
         }).doOnCancel(() -> {
             log.warn("流被取消");
         }).doOnComplete(() ->{

@@ -18,6 +18,8 @@ public class GeminiRequestBody {
 
     private List<Content> contents;
     private GenerationConfig generationConfig;
+    private List<Function_declarations> tools;
+
     @Data
     public static class Content {
         private String role;
@@ -52,6 +54,13 @@ public class GeminiRequestBody {
         private Float topP;
         private Integer maxOutputTokens;
         private List<String> stopSequences;
+    }
+
+    @Data
+    public static class Function_declarations {
+        private String name;
+        private String description;
+        private Object parameters;
     }
 
     public static GeminiRequestBody builder(OpenAiRequestBody request){
