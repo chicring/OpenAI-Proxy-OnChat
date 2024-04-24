@@ -58,8 +58,8 @@ public abstract class Adapter {
         //设置渠道选择的模型
         request.setModel(channel.getModel());
 
-
-        if (!channel.getType().equals(ChannelType.OPEN_AI.getType())) {
+        //Gemini
+        if (channel.getType().equals(ChannelType.GEMINI.getType())) {
             List<OpenAiRequestBody.Message> originalMessages = request.getMessages();
             List<OpenAiRequestBody.Message> messages = IntStream.range(0, originalMessages.size())
                     .mapToObj(i -> {
@@ -79,7 +79,6 @@ public abstract class Adapter {
                     })
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
-
             request.setMessages(messages);
         }
 

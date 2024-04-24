@@ -30,6 +30,7 @@ public class QwenRequestBody {
     public static class Message {
         private String role;
         private String content;
+        private String name;
 
         public static List<Message> builder(List<OpenAiRequestBody.Message> messages){
 
@@ -50,6 +51,21 @@ public class QwenRequestBody {
         private String incremental_output;
         private String stop;
         private boolean enable_search;
+        private List<Tools> tools;
+        private String result_format;
+
+        @Data
+        private static class Tools {
+            private String type;
+            private Function function;
+
+            @Data
+            private static class Function {
+                private String description;
+                private String name;
+                private Object parameters;
+            }
+        }
     }
 
     public static QwenRequestBody builder(OpenAiRequestBody openAiRequestBody){
@@ -64,15 +80,10 @@ public class QwenRequestBody {
 
         Parameters parameters = new Parameters();
         parameters.setTemperature(openAiRequestBody.getTemperature());
-        // qwen top_p 不能大于等于1
-//        double top_p = openAiRequestBody.getTop_p();
-//        if(top_p > 1 || top_p == 1 ){
-//            parameters.setTop_p(0.9);
-//        }else {
-//            parameters.setTop_p(openAiRequestBody.getTop_p());
-//        }
+
         parameters.setTop_p(openAiRequestBody.getTop_p());
-        //token不能大于1500
+        parameters.setResult_format("message");
+
         Integer max_tokens = openAiRequestBody.getMax_tokens();
         if(max_tokens != null && max_tokens > 1500) {
             parameters.setMax_tokens(1500);
@@ -86,8 +97,24 @@ public class QwenRequestBody {
             parameters.setIncremental_output("true");
         }
 
-        parameters.setStop(openAiRequestBody.getStop() == null ? "null" : openAiRequestBody.getStop());
-        // 如果有工具，开启联网搜索
+        parameters.setStop(openAiRequestBody.getStop());
+
+        if(!openAiRequestBody.getTools().isEmpty()) {
+            List<Parameters.Tools> tools = openAiRequestBody.getTools()
+                    .stream().map(tool -> {
+                        Parameters.Tools newTool = new Parameters.Tools();
+                        newTool.setType(tool.getType());
+                        Parameters.Tools.Function function = new Parameters.Tools.Function();
+                        function.setDescription(tool.getFunction().getDescription());
+                        function.setName(tool.getFunction().getName());
+                        function.setParameters(tool.getFunction().getParameters());
+                        newTool.setFunction(function);
+                        return newTool;
+                    }).toList();
+            parameters.setTools(tools);
+        }
+
+        // 如果模型以web-开头，开启联网搜索
         if(openAiRequestBody.getModel().startsWith(OPEN_WEB_SEARCH)){
             parameters.setEnable_search(true);
             qwenRequestBody.setModel(openAiRequestBody.getModel().substring(4));

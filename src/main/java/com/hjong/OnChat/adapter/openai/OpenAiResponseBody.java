@@ -48,7 +48,7 @@ public class OpenAiResponseBody {
             @Data
             public static class Function{
                 private String name;
-                private Object arguments;
+                private String arguments;
             }
         }
     }

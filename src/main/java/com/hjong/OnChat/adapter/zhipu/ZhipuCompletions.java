@@ -23,7 +23,7 @@ public class ZhipuCompletions extends Adapter {
         return getWebClient(enableProxy).post()
                 .uri(buildEndpoint(url, ZHIPU))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
-                .bodyValue(request)
+                .bodyValue(ZhiPuRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class)
                 .retry(3);
@@ -35,7 +35,7 @@ public class ZhipuCompletions extends Adapter {
         return getWebClient(enableProxy).post()
                 .uri(buildEndpoint(url, ZHIPU))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apikey)
-                .bodyValue(request)
+                .bodyValue(ZhiPuRequestBody.builder(request))
                 .retrieve()
                 .bodyToFlux(String.class)
                 .retry(3);

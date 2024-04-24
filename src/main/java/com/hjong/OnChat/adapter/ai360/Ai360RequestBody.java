@@ -37,13 +37,15 @@ public class Ai360RequestBody {
     private String stop;
     private Integer max_tokens;
 
-    List<Map<String,Object>> tools;
+    List<Tools> tools;
 
     private String tool_choice;
 
     @Data
     public static class Tools{
         private String type;  //function | retrieval | web_search
+
+        private Web_search web_search;
 
         @Data
         public static class Web_search{
@@ -84,36 +86,20 @@ public class Ai360RequestBody {
 
         ai360RequestBody.setMessages(message);
 
-        if (openAiRequestBody.getTools() !=null) {
-            List<Map<String, Object>> tools = openAiRequestBody.getTools()
-                    .stream().map(tool -> {
-
-                        Tools.Function function = new Tools.Function();
-                        function.setDescription(tool.getFunction().getDescription());
-                        function.setName(tool.getFunction().getName());
-                        function.setParameters(tool.getFunction().getParameters());
-
-                        return Map.of(
-                                TOOL_TYPE, tool.getType(),
-                                TOOL_FUNCTION, function
-                        );
-
-                    }).toList();
-            ai360RequestBody.setTools(tools);
-        }
         if (openAiRequestBody.getModel().startsWith(OPEN_WEB_SEARCH)){
-            Map<String, Object> search_tool = new HashMap<>();
-            search_tool.put(TOOL_TYPE, TOOL_WEB_SEARCH);
+
+            Ai360RequestBody.Tools tool = new Ai360RequestBody.Tools();
+            tool.setType(TOOL_WEB_SEARCH);
 
             Tools.Web_search webSearch = new Tools.Web_search();
             webSearch.setSearch_mode(SEARCH_MODE_AUTO);
 
-            search_tool.put(TOOL_WEB_SEARCH, webSearch);
+            tool.setWeb_search(webSearch);
 
             if (ai360RequestBody.getTools() == null) {
-                ai360RequestBody.setTools(List.of(search_tool));
+                ai360RequestBody.setTools(List.of(tool));
             } else {
-                ai360RequestBody.getTools().add(search_tool);
+                ai360RequestBody.getTools().add(tool);
             }
             ai360RequestBody.setModel(ai360RequestBody.getModel().substring(4));
         }

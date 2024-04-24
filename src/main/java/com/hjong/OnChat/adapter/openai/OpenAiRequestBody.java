@@ -18,6 +18,9 @@ public class OpenAiRequestBody {
     public static class Message{
         private String role;
         private String content;
+        private String name;
+        private Object tool_calls;
+        private String tool_call_id;
 
         public Message builder(String role, String content){
             Message message = new Message();

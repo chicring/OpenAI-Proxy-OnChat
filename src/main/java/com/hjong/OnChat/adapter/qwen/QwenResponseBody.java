@@ -26,8 +26,34 @@ public class QwenResponseBody {
 
     @Data
     public static class Output {
-        private String finish_reason;
-        private String text;
+
+        private List<Choices> choices;
+        @Data
+        public static class  Choices{
+            private Message message;
+            private String finish_reason;
+
+            @Data
+            public static class Message{
+                private String role;
+                private String content;
+                private List<Tool_calls> tool_calls;
+            }
+
+            @Data
+            public static class Tool_calls{
+                private String id;
+                private String type;
+                private Function function;
+
+                @Data
+                public static class Function{
+                    private String name;
+                    private String arguments;
+                }
+            }
+
+        }
     }
 
     @Data
@@ -39,6 +65,7 @@ public class QwenResponseBody {
 
     public static Flux<String> QwenToOpenAI(QwenResponseBody responseBody,String model){
 
+        System.out.printf(responseBody.toString());
         OpenAiResponseBody openAiResponseBody = new OpenAiResponseBody();
 
         List<OpenAiResponseBody.Choices> choicesList = new ArrayList<>();
@@ -46,21 +73,37 @@ public class QwenResponseBody {
         OpenAiResponseBody.Choices choices = new OpenAiResponseBody.Choices();
 
         OpenAiResponseBody.Message message = new OpenAiResponseBody.Message();
-        message.setRole(ChatRoleEnum.ASSISTANT.getRole());
-        message.setContent(responseBody.getOutput().getText());
+        message.setRole(responseBody.getOutput().getChoices().getFirst().getMessage().getRole());
+        message.setContent(responseBody.getOutput().getChoices().getFirst().getMessage().getContent());
+
+
+        message.setTool_calls(
+                responseBody.getOutput().getChoices().getFirst().getMessage().getTool_calls()
+                        .stream().map(tool -> {
+                            OpenAiResponseBody.Message.Tool_calls toolCalls = new OpenAiResponseBody.Message.Tool_calls();
+                            toolCalls.setType(tool.getType());
+                            toolCalls.setId(tool.getId());
+                            OpenAiResponseBody.Message.Tool_calls.Function function = new OpenAiResponseBody.Message.Tool_calls.Function();
+                            function.setName(tool.getFunction().getName());
+                            function.setArguments(tool.getFunction().getArguments());
+                            toolCalls.setFunction(function);
+                            return toolCalls;
+                        }).toList()
+        );
+
         choices.setMessage(message);
         choices.setDelta(message);
         choicesList.add(choices);
         openAiResponseBody.setChoices(choicesList);
-
+//
         openAiResponseBody.setId(responseBody.getRequest_id());
         openAiResponseBody.setObject("chat.completion.chunk");
         openAiResponseBody.setCreated(Instant.now().getEpochSecond());
         openAiResponseBody.setModel(model);
-
+//
         openAiResponseBody.getChoices().getFirst().setIndex(0);
-        openAiResponseBody.getChoices().getFirst().setFinish_reason(responseBody.getOutput().getFinish_reason());
-
+        openAiResponseBody.getChoices().getFirst().setFinish_reason(responseBody.getOutput().getChoices().getFirst().getFinish_reason());
+//
         OpenAiResponseBody.Usage usage = new OpenAiResponseBody.Usage();
 
         usage.setPrompt_tokens(responseBody.getUsage().getInput_tokens());

@@ -26,6 +26,7 @@ public class ZhiPuRequestBody {
         private String role;
         private String content;
         private String tool_call_id;
+        private Object tool_calls;
     }
 
     private boolean stream;
@@ -38,13 +39,15 @@ public class ZhiPuRequestBody {
     private String stop;
     private Integer max_tokens;
 
-    List<Map<String,Object>> tools;
+    List<Tools> tools;
 
     private String tool_choice;
 
     @Data
     public static class Tools{
         private String type;  //function | retrieval | web_search
+        private Web_search web_search;
+        private Function function;
 
         @Data
         public static class Web_search{
@@ -86,18 +89,19 @@ public class ZhiPuRequestBody {
         zhiPuRequestBody.setMessages(message);
 
         if (openAiRequestBody.getTools() !=null) {
-            List<Map<String, Object>> tools = openAiRequestBody.getTools()
+            List<Tools> tools = openAiRequestBody.getTools()
                     .stream().map(tool -> {
+                        ZhiPuRequestBody.Tools newTool = new Tools();
+
+                        newTool.setType(TOOL_FUNCTION);
 
                         ZhiPuRequestBody.Tools.Function function = new ZhiPuRequestBody.Tools.Function();
                         function.setDescription(tool.getFunction().getDescription());
                         function.setName(tool.getFunction().getName());
                         function.setParameters(tool.getFunction().getParameters());
 
-                        return Map.of(
-                                TOOL_TYPE, tool.getType(),
-                                TOOL_FUNCTION, function
-                        );
+                        newTool.setFunction(function);
+                        return newTool;
 
                     }).toList();
             zhiPuRequestBody.setTools(tools);
@@ -105,13 +109,14 @@ public class ZhiPuRequestBody {
 
 
         if (openAiRequestBody.getModel().startsWith(OPEN_WEB_SEARCH)){
-            Map<String, Object> search_tool = new HashMap<>();
-            search_tool.put(TOOL_TYPE, TOOL_WEB_SEARCH);
 
-            ZhiPuRequestBody.Tools.Web_search webSearch = new ZhiPuRequestBody.Tools.Web_search();
-            webSearch.setEnable(true);
+            ZhiPuRequestBody.Tools search_tool = new Tools();
 
-            search_tool.put(TOOL_WEB_SEARCH, webSearch);
+            ZhiPuRequestBody.Tools.Web_search web_search = new Tools.Web_search();
+            web_search.setEnable(true);
+
+            search_tool.setType(TOOL_WEB_SEARCH);
+            search_tool.setWeb_search(web_search);
 
             if (zhiPuRequestBody.getTools() == null) {
                 zhiPuRequestBody.setTools(List.of(search_tool));
@@ -121,6 +126,7 @@ public class ZhiPuRequestBody {
             zhiPuRequestBody.setModel(zhiPuRequestBody.getModel().substring(4));
         }
 
+        System.out.printf(zhiPuRequestBody.toString());
         return zhiPuRequestBody;
     }
 
