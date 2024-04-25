@@ -39,7 +39,7 @@ public class FlowLimitingFilter implements WebFilter {
 
     public FlowLimitingFilter() {
         PathPatternParser parser = new PathPatternParser();
-        // 排除不需要要验证的路径
+
         this.excludePatterns = List.of(
                 parser.parse("/user/ask-code")
         );
@@ -52,10 +52,6 @@ public class FlowLimitingFilter implements WebFilter {
         PathContainer requestPath = request.getPath().pathWithinApplication();
 
         boolean isExclude = excludePatterns.stream().anyMatch(pattern -> pattern.matches(requestPath));
-
-        if (request.getMethod() == HttpMethod.OPTIONS) {
-            return chain.filter(exchange);
-        }
 
         if(!isExclude){
             log.debug("放行：{}",requestPath);

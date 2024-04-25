@@ -23,7 +23,6 @@ public class ProxyController {
     @Resource
     ProxyServiceImpl ProxyServiceImpl;
 
-    @CrossOrigin
     @PostMapping(value = "/v1/chat/completions")
     public Publisher<String> Completions(@RequestBody OpenAiRequestBody requestBody,
                                          ServerWebExchange exchange)

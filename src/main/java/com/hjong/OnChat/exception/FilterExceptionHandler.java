@@ -27,7 +27,7 @@ public class FilterExceptionHandler implements ErrorWebExceptionHandler {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.OK);
 
-        Result vo;
+        Result<String> vo;
         if (ex instanceof ServiceException serviceException) {
             vo = Result.fail(serviceException.getServiceExceptionEnum());
         } else {
@@ -36,7 +36,7 @@ public class FilterExceptionHandler implements ErrorWebExceptionHandler {
 
         DataBuffer buff = response.bufferFactory()
                 .wrap(JsonUtil.toJSONString(vo).getBytes());
-        //基于流形式
+
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         return response.writeAndFlushWith(Mono.just(ByteBufMono.just(buff)));
     }

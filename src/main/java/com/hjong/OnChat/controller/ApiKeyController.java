@@ -21,7 +21,6 @@ import static com.hjong.OnChat.entity.Consts.USER_ID;
  **/
 
 @Validated
-@CrossOrigin
 @RestController
 @RequestMapping("/apikey")
 public class ApiKeyController {

@@ -47,7 +47,9 @@ public class AuthWebFilter implements WebFilter {
         this.excludePatterns = List.of(
                 parser.parse("/user/login"),
                 parser.parse("/user/register"),
-                parser.parse("/user/ask-code")
+                parser.parse("/user/ask-code"),
+                parser.parse("/user/reset"),
+                parser.parse("/favicon.ico")
         );
     }
 
@@ -57,10 +59,6 @@ public class AuthWebFilter implements WebFilter {
         ServerHttpRequest request = exchange.getRequest();
         PathContainer requestPath = request.getPath().pathWithinApplication();
         String token = request.getHeaders().getFirst("Authorization");
-
-        if (request.getMethod() == HttpMethod.OPTIONS) {
-            return chain.filter(exchange);
-        }
 
         boolean isExclude = excludePatterns.stream().anyMatch(pattern -> pattern.matches(requestPath));
         if(isExclude){

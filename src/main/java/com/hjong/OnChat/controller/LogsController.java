@@ -21,7 +21,6 @@ import static com.hjong.OnChat.entity.Consts.*;
  **/
 
 @Validated
-@CrossOrigin
 @RestController
 @RequestMapping("/logs")
 public class LogsController {

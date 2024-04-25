@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.MissingRequestValueException;
 import reactor.core.publisher.Mono;
 
 
@@ -75,6 +76,12 @@ public class GlobalErrorHandler  {
         String res = e.getResponseBodyAsString();
         log.error("API error: {} {}", status, res);
         return Mono.just(Result.fail(res));
+    }
+
+    @ExceptionHandler(value = MissingRequestValueException.class)
+    public Mono<Result<Object>> handleMissingRequestValueException(MissingRequestValueException e){
+        log.error(e.getMessage());
+        return Mono.just(Result.fail("缺少请求参数"));
     }
 
     @ExceptionHandler(value = Exception.class)

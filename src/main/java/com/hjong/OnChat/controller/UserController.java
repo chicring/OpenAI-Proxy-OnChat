@@ -24,7 +24,6 @@ import static com.hjong.OnChat.entity.Consts.USER_ID;
  * @date 2024/3/18
  **/
 @Slf4j
-@CrossOrigin
 @Validated
 @RestController
 @RequestMapping("/user")

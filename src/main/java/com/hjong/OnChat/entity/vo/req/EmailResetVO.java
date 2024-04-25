@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 public class EmailResetVO {
-    @Email
+    @Email(message = "邮箱不正确")
     String email;
     @Length(max = 6, min = 6)
     String code;

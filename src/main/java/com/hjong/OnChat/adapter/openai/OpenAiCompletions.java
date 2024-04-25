@@ -41,5 +41,4 @@ public class OpenAiCompletions extends Adapter {
                 .retry(3);
     }
 
-
 }

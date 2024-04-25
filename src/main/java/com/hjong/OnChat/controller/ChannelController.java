@@ -24,7 +24,6 @@ import java.util.List;
 
 @CheckRole
 @Validated
-@CrossOrigin
 @RestController
 @RequestMapping("/channel")
 public class ChannelController {

@@ -28,6 +28,7 @@ public class QwenResponseBody {
     public static class Output {
 
         private List<Choices> choices;
+
         @Data
         public static class  Choices{
             private Message message;
@@ -65,7 +66,8 @@ public class QwenResponseBody {
 
     public static Flux<String> QwenToOpenAI(QwenResponseBody responseBody,String model){
 
-        System.out.printf(responseBody.toString());
+        System.out.println(responseBody.toString());
+
         OpenAiResponseBody openAiResponseBody = new OpenAiResponseBody();
 
         List<OpenAiResponseBody.Choices> choicesList = new ArrayList<>();
@@ -76,20 +78,22 @@ public class QwenResponseBody {
         message.setRole(responseBody.getOutput().getChoices().getFirst().getMessage().getRole());
         message.setContent(responseBody.getOutput().getChoices().getFirst().getMessage().getContent());
 
+        if(responseBody.getOutput().getChoices().getFirst().getMessage().getTool_calls() != null){
+            message.setTool_calls(
+                    responseBody.getOutput().getChoices().getFirst().getMessage().getTool_calls()
+                            .stream().map(tool -> {
+                                OpenAiResponseBody.Message.Tool_calls toolCalls = new OpenAiResponseBody.Message.Tool_calls();
+                                toolCalls.setType(tool.getType());
+                                toolCalls.setId(tool.getId());
+                                OpenAiResponseBody.Message.Tool_calls.Function function = new OpenAiResponseBody.Message.Tool_calls.Function();
+                                function.setName(tool.getFunction().getName());
+                                function.setArguments(tool.getFunction().getArguments());
+                                toolCalls.setFunction(function);
+                                return toolCalls;
+                            }).toList()
+            );
+        }
 
-        message.setTool_calls(
-                responseBody.getOutput().getChoices().getFirst().getMessage().getTool_calls()
-                        .stream().map(tool -> {
-                            OpenAiResponseBody.Message.Tool_calls toolCalls = new OpenAiResponseBody.Message.Tool_calls();
-                            toolCalls.setType(tool.getType());
-                            toolCalls.setId(tool.getId());
-                            OpenAiResponseBody.Message.Tool_calls.Function function = new OpenAiResponseBody.Message.Tool_calls.Function();
-                            function.setName(tool.getFunction().getName());
-                            function.setArguments(tool.getFunction().getArguments());
-                            toolCalls.setFunction(function);
-                            return toolCalls;
-                        }).toList()
-        );
 
         choices.setMessage(message);
         choices.setDelta(message);

@@ -48,7 +48,7 @@ public class QwenRequestBody {
         private Float temperature;
         private Float top_p;
         private Integer max_tokens;
-        private String incremental_output;
+        private boolean incremental_output;
         private String stop;
         private boolean enable_search;
         private List<Tools> tools;
@@ -93,8 +93,9 @@ public class QwenRequestBody {
             parameters.setMax_tokens(openAiRequestBody.getMax_tokens());
         }
 
+        // 如果是流式请求，开启增量输出
         if(openAiRequestBody.isStream()){
-            parameters.setIncremental_output("true");
+            parameters.setIncremental_output(true);
         }
 
         parameters.setStop(openAiRequestBody.getStop());

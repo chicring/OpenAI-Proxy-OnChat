@@ -21,7 +21,7 @@ import static com.hjong.OnChat.entity.Consts.USER_ID;
  * @version 1.0
  * @date 2024/4/15
  **/
-@CrossOrigin
+
 @RequestMapping("/knowledgeBase")
 @RestController
 public class KnowledgeBaseController {

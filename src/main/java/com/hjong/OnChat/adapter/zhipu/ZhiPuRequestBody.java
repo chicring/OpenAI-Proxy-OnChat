@@ -126,7 +126,6 @@ public class ZhiPuRequestBody {
             zhiPuRequestBody.setModel(zhiPuRequestBody.getModel().substring(4));
         }
 
-        System.out.printf(zhiPuRequestBody.toString());
         return zhiPuRequestBody;
     }
 
