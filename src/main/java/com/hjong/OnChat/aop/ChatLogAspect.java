@@ -61,7 +61,8 @@ public class ChatLogAspect {
         AtomicReference<Integer> totalTokens = new AtomicReference<>(0);
 
         log.info("输入: {}", requestBody.getMessages().getLast().getContent());
-        
+
+        @SuppressWarnings("unchecked")
         Flux<Object> result = (Flux<Object>) joinPoint.proceed();
 
         return result.doOnError(error -> {
@@ -87,6 +88,12 @@ public class ChatLogAspect {
                             completionTokens.set(jsonNode.get("usage").get("completion_tokens").asInt());
                             promptTokens.set(jsonNode.get("usage").get("prompt_tokens").asInt());
                             totalTokens.set(jsonNode.get("usage").get("total_tokens").asInt());
+                        case "\"\"":
+                            if(!jsonNode.get("usage").isEmpty()){
+                                completionTokens.set(jsonNode.get("usage").get("completion_tokens").asInt());
+                                promptTokens.set(jsonNode.get("usage").get("prompt_tokens").asInt());
+                                totalTokens.set(jsonNode.get("usage").get("total_tokens").asInt());
+                            }
                         default:
                             if (jsonNode.get("choices").get(0).has("delta")) {
                                 output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
