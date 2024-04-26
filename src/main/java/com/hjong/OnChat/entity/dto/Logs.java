@@ -23,9 +23,9 @@ public class Logs {
     private Integer userId;
     private String username;
     private String model;
-    private Long totalToken;
-    private Long promptTokens;
-    private Long completionTokens;
+    private Integer totalToken;
+    private Integer promptTokens;
+    private Integer completionTokens;
     private String inputText;
     private String outputText;
     private String ip;

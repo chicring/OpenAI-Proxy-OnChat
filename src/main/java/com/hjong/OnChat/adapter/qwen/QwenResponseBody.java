@@ -66,8 +66,6 @@ public class QwenResponseBody {
 
     public static Flux<String> QwenToOpenAI(QwenResponseBody responseBody,String model){
 
-        System.out.println(responseBody.toString());
-
         OpenAiResponseBody openAiResponseBody = new OpenAiResponseBody();
 
         List<OpenAiResponseBody.Choices> choicesList = new ArrayList<>();

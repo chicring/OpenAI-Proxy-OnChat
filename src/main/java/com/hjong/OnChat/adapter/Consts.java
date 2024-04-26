@@ -36,4 +36,8 @@ public class Consts {
 
     public static final String SEARCH_MODE_ALWAYS = "always";
 
+    public static final String FINISH_SEASON_STOP = "stop";
+
+    public static final String FINISH_SEASON_TOOL_CALL = "tool_calls";
+
 }

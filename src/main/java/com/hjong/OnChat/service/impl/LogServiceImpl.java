@@ -55,9 +55,9 @@ public class LogServiceImpl implements LogService {
                     logs.setUserId((Integer)result.get("user_id"));
                     logs.setUsername((String)result.get("username"));
                     logs.setModel((String)result.get("model"));
-                    logs.setTotalToken((Long)result.get("total_token"));
-                    logs.setPromptTokens((Long)result.get("prompt_tokens"));
-                    logs.setCompletionTokens((Long)result.get("completion_tokens"));
+                    logs.setTotalToken((Integer) result.get("total_token"));
+                    logs.setPromptTokens((Integer)result.get("prompt_tokens"));
+                    logs.setCompletionTokens((Integer)result.get("completion_tokens"));
                     logs.setInputText((String)result.get("input_text"));
                     logs.setOutputText((String)result.get("output_text"));
                     logs.setIp((String)result.get("ip"));

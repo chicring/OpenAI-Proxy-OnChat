@@ -21,6 +21,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.hjong.OnChat.entity.Consts.DONE;
 
@@ -53,35 +54,48 @@ public class ChatLogAspect {
         ServerWebExchange exchange = (ServerWebExchange) joinPoint.getArgs()[2];
 
         ServerHttpRequest request = exchange.getRequest();
+
         StringBuilder output = new StringBuilder();
+        AtomicReference<Integer> completionTokens = new AtomicReference<>(0);
+        AtomicReference<Integer> promptTokens = new AtomicReference<>(0);
+        AtomicReference<Integer> totalTokens = new AtomicReference<>(0);
 
         log.info("输入: {}", requestBody.getMessages().getLast().getContent());
-        //执行目标方法
+        
         Flux<Object> result = (Flux<Object>) joinPoint.proceed();
 
         return result.doOnError(error -> {
             log.error("error: " + error);
         }).doOnNext(json -> {
-                if(requestBody.isStream()){
-                    if (!json.equals(DONE)) {
-                        JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
-                        if(jsonNode.get("choices").get(0).get("finish_reason").toString().equals("\"tool_calls\"")){
-                            log.debug("工具调用,不记录对话");
-                        }else {
-                            if (jsonNode.get("choices").get(0).get("delta").has("content")) {
-                                output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
-                            }
-                        }
-                    }
-                }else {
+                if (!json.equals(DONE)) {
                     JsonNode jsonNode = JsonUtil.parseJSONObject((String) json);
-                    if(jsonNode.get("choices").get(0).get("finish_reason").toString().equals("\"tool_calls\"")){
-                        log.debug("工具调用,不记录对话");
-                    }else {
-                        output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
+
+                    String finishReason = "null";
+                    if (jsonNode.get("choices").get(0).has("finish_reason")) {
+                        finishReason = jsonNode.get("choices").get(0).get("finish_reason").toString();
+                    }
+
+                    System.out.println(finishReason);
+                    switch (finishReason) {
+                        case "\"tool_calls\"":
+                            log.debug("工具调用,不记录对话");
+                            break;
+                        case "\"max_tokens\"":
+                            log.debug("达到最大token数,不记录对话");
+                            break;
+                        case "\"stop\"":
+                            log.debug("达到stop条件,记录token数");
+                            completionTokens.set(jsonNode.get("usage").get("completion_tokens").asInt());
+                            promptTokens.set(jsonNode.get("usage").get("prompt_tokens").asInt());
+                            totalTokens.set(jsonNode.get("usage").get("total_tokens").asInt());
+                        default:
+                            if (jsonNode.get("choices").get(0).has("delta")) {
+                                output.append(jsonNode.get("choices").get(0).get("delta").get("content").toString());
+                            }else {
+                                output.append(jsonNode.get("choices").get(0).get("message").get("content").toString());
+                            }
                     }
                 }
-
         }).doOnCancel(() -> {
             log.warn("流被取消");
         }).doOnComplete(() ->{
@@ -105,6 +119,9 @@ public class ChatLogAspect {
                                     .setConsumeTime((System.currentTimeMillis()-start)/ 1000.0)
                                     .setCreatedAt(Instant.now().getEpochSecond())
                                     .setIp(Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress())
+                                    .setCompletionTokens(completionTokens.get())
+                                    .setPromptTokens(promptTokens.get())
+                                    .setTotalToken(totalTokens.get())
                     );
             saveLog.subscribeOn(Schedulers.boundedElastic()).subscribe();
 

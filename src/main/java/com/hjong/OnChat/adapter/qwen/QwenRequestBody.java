@@ -100,7 +100,7 @@ public class QwenRequestBody {
 
         parameters.setStop(openAiRequestBody.getStop());
 
-        if(!openAiRequestBody.getTools().isEmpty()) {
+        if(openAiRequestBody.getTools() != null){
             List<Parameters.Tools> tools = openAiRequestBody.getTools()
                     .stream().map(tool -> {
                         Parameters.Tools newTool = new Parameters.Tools();
