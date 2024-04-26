@@ -32,7 +32,15 @@ chat:
     expires-minute: ${CHAT_TOKEN_EXPIRES_MINUTE:43200} #token过期时间
   channel:
     strategy: ${Channel_Strategy:first}  #聊天通道策略
+  vector:
+    embedding:
+      type: zhipu
 
+milvus:
+  host: ${MILVUS_HOST:127.0.0.1}  #milvus地址
+  port: ${MILVUS_PORT:19530}       #milvus端口
+  username: ${MILVUS_USERNAME:root} #milvus用户名
+  password: ${MILVUS_PASSWORD:root123} #milvus密码
 
 
 
