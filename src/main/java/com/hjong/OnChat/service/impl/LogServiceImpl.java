@@ -103,7 +103,7 @@ public class LogServiceImpl implements LogService {
         sql.append("ORDER BY created_at DESC ");
 
         if(vo.getPage() != null && vo.getSize() != null) {
-            long offset = (vo.getPage() - 1) * vo.getSize();
+            Integer offset = (vo.getPage() - 1) * vo.getSize();
             sql.append("LIMIT ").append(vo.getSize()).append(" OFFSET ").append(offset).append(" ");
         }
         return sql.toString();

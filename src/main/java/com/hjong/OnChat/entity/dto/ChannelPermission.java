@@ -14,6 +14,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ChannelPermission {
     @Id
     private Integer id;
-    private Integer user_id;
-    private Integer channel_id;
+    private Integer userId;
+    private Integer channelId;
 }
