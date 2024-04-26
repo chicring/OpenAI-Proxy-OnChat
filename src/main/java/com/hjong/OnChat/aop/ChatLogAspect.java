@@ -75,7 +75,6 @@ public class ChatLogAspect {
                         finishReason = jsonNode.get("choices").get(0).get("finish_reason").toString();
                     }
 
-                    System.out.println(finishReason);
                     switch (finishReason) {
                         case "\"tool_calls\"":
                             log.debug("工具调用,不记录对话");

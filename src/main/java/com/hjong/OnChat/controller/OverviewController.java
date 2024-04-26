@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -89,6 +90,14 @@ public class OverviewController {
     @GetMapping("/all-models")
     Mono<Result<List<String>>> getAllAvailableModels(){
         return overviewService.getAllAvailableModels()
+                .map(Result::ok);
+    }
+
+    @GetMapping("/usage-token")
+    Mono<Result<Map<String,Long>>> getUsageToken(@NotNull @RequestParam Instant start,
+                                                 @NotNull @RequestParam Instant end,
+                                                 @RequestHeader(USER_ID) Integer userId){
+        return overviewService.getUsageToken(start, end, userId)
                 .map(Result::ok);
     }
 

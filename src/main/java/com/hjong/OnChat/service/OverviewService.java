@@ -46,4 +46,6 @@ public interface OverviewService {
     Mono<Map<String, Long>> getCountOfUsersByRole();
 
     Mono<List<String>> getAllAvailableModels();
+
+    Mono<Map<String,Long>> getUsageToken(Instant start, Instant end, Integer userId);
 }

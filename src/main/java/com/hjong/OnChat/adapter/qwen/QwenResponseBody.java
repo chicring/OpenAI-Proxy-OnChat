@@ -1,7 +1,6 @@
 package com.hjong.OnChat.adapter.qwen;
 
 import com.hjong.OnChat.adapter.openai.OpenAiResponseBody;
-import com.hjong.OnChat.entity.enums.ChatRoleEnum;
 import com.hjong.OnChat.util.JsonUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -97,15 +96,15 @@ public class QwenResponseBody {
         choices.setDelta(message);
         choicesList.add(choices);
         openAiResponseBody.setChoices(choicesList);
-//
+
         openAiResponseBody.setId(responseBody.getRequest_id());
         openAiResponseBody.setObject("chat.completion.chunk");
         openAiResponseBody.setCreated(Instant.now().getEpochSecond());
         openAiResponseBody.setModel(model);
-//
+
         openAiResponseBody.getChoices().getFirst().setIndex(0);
         openAiResponseBody.getChoices().getFirst().setFinish_reason(responseBody.getOutput().getChoices().getFirst().getFinish_reason());
-//
+
         OpenAiResponseBody.Usage usage = new OpenAiResponseBody.Usage();
 
         usage.setPrompt_tokens(responseBody.getUsage().getInput_tokens());

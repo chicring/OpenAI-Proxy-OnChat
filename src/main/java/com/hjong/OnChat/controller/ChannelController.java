@@ -50,7 +50,7 @@ public class ChannelController {
         return channelService.deleteChannel(id).thenReturn(Result.ok("删除成功"));
     }
 
-    @PostMapping("/update")
+    @PutMapping
     public Mono<Result<Void>> updateChannel(@RequestBody UpdateChannelVO vo) {
         return channelService.updateChannel(vo).thenReturn(Result.ok("更新成功"));
     }

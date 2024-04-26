@@ -10,7 +10,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.sql.SQLOutput;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -171,6 +171,32 @@ public class OverviewServiceImpl implements OverviewService {
                 .all()
                 .map(result -> (String) result.get("model"))
                 .collectList();
+    }
+
+    @Override
+    public Mono<Map<String, Long>> getUsageToken(Instant start, Instant end, Integer userId) {
+
+        String sql = "SELECT SUM(total_token) as total_tokens ," +
+                     "SUM(prompt_tokens) as prompt_tokens ," +
+                     "SUM(completion_tokens) as completion_tokens " +
+                     "FROM logs " +
+                     "WHERE created_at >= :startTimestamp AND created_at <= :endTimestamp AND user_id = :userId";
+        long startTimestamp = start.toEpochMilli();
+        long endTimestamp = end.toEpochMilli();
+
+        return databaseClient.sql(sql)
+                .bind("startTimestamp", startTimestamp)
+                .bind("endTimestamp", endTimestamp)
+                .bind("userId", userId)
+                .fetch()
+                .first()
+                .map(result -> {
+                    Map<String, Long> map = new HashMap<>();
+                    map.put("total_tokens", result.get("total_tokens") == null ? 0L : ((BigDecimal) result.get("total_tokens")).longValue());
+                    map.put("prompt_tokens", result.get("prompt_tokens") == null ? 0L : ((BigDecimal) result.get("prompt_tokens")).longValue());
+                    map.put("completion_tokens", result.get("completion_tokens") == null ? 0L : ((BigDecimal) result.get("completion_tokens")).longValue());
+                    return map;
+                });
     }
 
 
