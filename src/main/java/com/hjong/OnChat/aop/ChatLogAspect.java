@@ -61,8 +61,7 @@ public class ChatLogAspect {
         AtomicReference<Integer> totalTokens = new AtomicReference<>(0);
 
         log.info("输入: {}", requestBody.getMessages().getLast().getContent());
-
-        @SuppressWarnings("unchecked")
+        
         Flux<Object> result = (Flux<Object>) joinPoint.proceed();
 
         return result.doOnError(error -> {

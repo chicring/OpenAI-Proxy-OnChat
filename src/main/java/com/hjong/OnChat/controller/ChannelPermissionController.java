@@ -33,7 +33,13 @@ public class ChannelPermissionController {
     }
 
     @GetMapping
-    public Mono<Result<PageVO<ChannelPermissionVO>>> findPermission(@Valid ChannelPermissionQueryVO vo) {
+    public Mono<Result<PageVO<ChannelPermissionVO>>> findPermission(@RequestParam Integer page,
+                                                                    @RequestParam Integer size,
+                                                                    @RequestParam(required = false) String search) {
+        ChannelPermissionQueryVO vo = new ChannelPermissionQueryVO();
+        vo.setPage(page);
+        vo.setSize(size);
+        vo.setSearch(search);
         return channelPermissionService.find(vo).map(Result::ok);
     }
 }

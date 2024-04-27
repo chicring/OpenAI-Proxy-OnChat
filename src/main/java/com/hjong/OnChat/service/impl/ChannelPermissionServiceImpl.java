@@ -39,58 +39,58 @@ public class ChannelPermissionServiceImpl implements ChannelPermissionService {
 
     @Override
     public Mono<PageVO<ChannelPermissionVO>> find(ChannelPermissionQueryVO vo) {
-        StringBuilder sql = new StringBuilder("SELECT *, user.username, channel.name, channel.type FROM channel_permission ")
-                .append("JOIN user ON channel_permission.user_id = user.id ")
-                .append("JOIN channel ON channel_permission.channel_id = channel.id WHERE 1=1 ");
+        StringBuilder sql = new StringBuilder("SELECT ChannelPermission.*, User.username, Channel.name, Channel.type FROM ChannelPermission ")
+                .append("JOIN User ON ChannelPermission.user_id = User.id ")
+                .append("JOIN Channel ON ChannelPermission.channel_id = Channel.id WHERE 1=1 ");
 
-        if (vo.getUsername() != null) {
-            sql.append("AND user.username = :username ");
+        if (vo.getSearch() != null && !vo.getSearch().isEmpty()) {
+            sql.append("AND (User.username LIKE :search OR Channel.name LIKE :search OR Channel.type LIKE :search) ");
         }
 
-        if (vo.getChannelName() != null) {
-            sql.append("AND channel.name = :channelName ");
+        String countSql = sql.toString().replace("SELECT ChannelPermission.*, User.username, Channel.name, Channel.type", "SELECT COUNT(*) as count");
+
+        sql.append("ORDER BY ChannelPermission.id DESC LIMIT :limit OFFSET :offset");
+
+        DatabaseClient.GenericExecuteSpec executeSpec = databaseClient.sql(countSql);
+
+        if (vo.getSearch() != null && !vo.getSearch().isEmpty()){
+            executeSpec = executeSpec.bind("search", vo.getSearch());
         }
 
-        sql.append("ORDER BY channel_permission.id DESC LIMIT :limit OFFSET :offset");
 
-        String countSql = sql.toString().replace("SELECT *, user.username, channel.name, channel.type", "SELECT COUNT(*)");
-        Mono<Long> count = databaseClient.sql(countSql)
-                .bind("username", vo.getUsername())
-                .bind("channelName", vo.getChannelName())
-                .fetch()
+        return executeSpec.fetch()
                 .one()
-                .map(result -> (Long) result.get("count"));
+                .flatMap(total -> {
+                    DatabaseClient.GenericExecuteSpec executeSpecData = databaseClient.sql(sql.toString());
 
-        return count.flatMap(total -> {
-            int totalPages = (int) Math.ceil((double) total / vo.getSize());
-            return databaseClient.sql(sql.toString())
-                    .bind("username", vo.getUsername())
-                    .bind("channelName", vo.getChannelName())
-                    .bind("limit", vo.getSize())
-                    .bind("offset", vo.getSize() * (vo.getPage() - 1))
-                    .fetch()
-                    .all()
-                    .map(result -> {
-                        ChannelPermissionVO channelPermissionVO = new ChannelPermissionVO();
-                        channelPermissionVO.setId((Integer) result.get("id"));
-                        channelPermissionVO.setUser_id((Integer) result.get("user_id"));
-                        channelPermissionVO.setChannel_id((Integer) result.get("channel_id"));
-                        channelPermissionVO.setUsername((String) result.get("username"));
-                        channelPermissionVO.setChannelName((String) result.get("name"));
-                        channelPermissionVO.setChannelType((String) result.get("type"));
-                        return channelPermissionVO;
-                    }).collectList()
-                    .map(list -> {
-                        PageVO<ChannelPermissionVO> pageVO = new PageVO<>();
-                        pageVO.setList(list);
-                        pageVO.setPageSize(vo.getSize());
-                        pageVO.setCurrentPage(vo.getPage());
-                        pageVO.setTotal(total);
-                        pageVO.setTotalPages(totalPages);
-                        return pageVO;
-                    });
-        });
+                    if (vo.getSearch() != null && !vo.getSearch().isEmpty()) {
+                        executeSpecData = executeSpecData.bind("search", vo.getSearch());
+                    }
+
+                    executeSpecData = executeSpecData.bind("limit", vo.getSize())
+                            .bind("offset", vo.getSize() * (vo.getPage() - 1));
+
+                    return executeSpecData.fetch()
+                            .all()
+                            .map(result -> {
+                                ChannelPermissionVO channelPermissionVO = new ChannelPermissionVO();
+                                channelPermissionVO.setId((Integer) result.get("id"));
+                                channelPermissionVO.setUserId((Integer) result.get("user_id"));
+                                channelPermissionVO.setChannelId((Integer) result.get("channel_id"));
+                                channelPermissionVO.setUsername((String) result.get("username"));
+                                channelPermissionVO.setChannelName((String) result.get("name"));
+                                channelPermissionVO.setChannelType((String) result.get("type"));
+                                return channelPermissionVO;
+                            }).collectList()
+                            .map(list -> {
+                                PageVO<ChannelPermissionVO> pageVO = new PageVO<>();
+                                pageVO.setList(list);
+                                pageVO.setPageSize(vo.getSize());
+                                pageVO.setCurrentPage(vo.getPage());
+                                pageVO.setTotal((Long) total.get("count"));
+                                return pageVO;
+                            });
+                });
     }
-
 
 }

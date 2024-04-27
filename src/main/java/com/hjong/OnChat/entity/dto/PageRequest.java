@@ -12,4 +12,6 @@ public class PageRequest {
     @Min(value = 5, message = "size不能小于5")
     @Max(value = 20, message = "size不能大于20")
     private Integer size;
+
+    private String search;
 }
