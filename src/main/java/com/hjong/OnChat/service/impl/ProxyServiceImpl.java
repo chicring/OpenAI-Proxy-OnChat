@@ -47,7 +47,8 @@ public class ProxyServiceImpl {
     @Resource
     Retrieve retrieve;
 
-    String key = "cb53a1f331daeb473e70ef6523887b5b.kl4IZMOA5NXxSeXH";
+    @Value("${chat.key}")
+    String key;
 
     public Flux<String> completions(OpenAiRequestBody request, ServerWebExchange exchange) {
 
