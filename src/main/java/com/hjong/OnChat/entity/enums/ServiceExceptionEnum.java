@@ -33,7 +33,7 @@ public enum ServiceExceptionEnum {
     /**
      * 渠道不存在
      */
-    CHANNEL_NOT_EXIST(404, "模型不可用"),
+    CHANNEL_NOT_EXIST(404, "模型不存在或渠道不可用"),
     /**
      * 用户已存在
      */
