@@ -1,17 +1,14 @@
 package com.hjong.OnChat.service.impl;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.hjong.OnChat.entity.dto.Channel;
 import com.hjong.OnChat.entity.dto.Model;
-import com.hjong.OnChat.entity.vo.req.AddChannelVO;
+import com.hjong.OnChat.entity.vo.req.ChannelVO;
 import com.hjong.OnChat.entity.vo.req.UpdateChannelVO;
 import com.hjong.OnChat.repositories.ChannelRepositories;
 import com.hjong.OnChat.repositories.ModelRepository;
 import com.hjong.OnChat.service.ChannelService;
-import com.hjong.OnChat.util.JsonUtil;
 import jakarta.annotation.Resource;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,7 +16,6 @@ import reactor.core.publisher.Mono;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author HJong
@@ -37,7 +33,7 @@ public class ChannelServiceImpl implements ChannelService {
     ModelRepository modelRepository;
 
     @Override
-    public Mono<Channel> saveChannel(AddChannelVO vo) {
+    public Mono<Channel> saveChannel(ChannelVO vo) {
         Channel channel = new Channel();
         channel.setName(vo.getName());
         channel.setType(vo.getType());
@@ -49,13 +45,15 @@ public class ChannelServiceImpl implements ChannelService {
         channel.setCreatedAt(Instant.now().getEpochSecond());
         return channelRepositories.save(channel)
                 .flatMap(c -> {
+                    String[] models = c.getModels().split(",");
+
                     Integer channelId = c.getId();
-                    Map<String, String> map = JsonUtil.parseJSONArray(c.getModels(), new TypeReference<Map<String, String>>() {});
+
                     List<Mono<Model>> monos = new ArrayList<>();
-                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                    for (String m : models) {
                         Model model = new Model();
-                        model.setRequestModel(entry.getKey());
-                        model.setRealModel(entry.getValue());
+                        model.setRequestModel(m);
+                        model.setRealModel(m);
                         model.setChannelId(channelId);
                         monos.add(modelRepository.save(model));
                     }
@@ -77,35 +75,25 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Mono<Channel> updateChannel(UpdateChannelVO vo) {
-        return channelRepositories.findById(vo.getId())
-                .flatMap(existingChannel -> {
-                    existingChannel.setName(vo.getName());
-                    existingChannel.setApiKey(vo.getApiKey());
-                    existingChannel.setBaseUrl(vo.getBaseUrl());
-                    existingChannel.setPriority(vo.getPriority());
-                    existingChannel.setEnableProxy(vo.isEnableProxy());
+    public Mono<Integer> updateChannel(ChannelVO vo) {
 
-                    // Handle added models
-                    List<Mono<Model>> addMonos = new ArrayList<>();
-                    for (String model : vo.getAdd()) {
-                        Model newModel = new Model();
-                        newModel.setRequestModel(model);
-                        newModel.setRealModel(model);
-                        newModel.setChannelId(existingChannel.getId());
-                        addMonos.add(modelRepository.save(newModel));
-                    }
+         return channelRepositories.updateById(vo.getName(), vo.getType(), vo.getApiKey(), vo.getBaseUrl(), vo.getModels(), vo.getPriority(), vo.isEnableProxy(), vo.getId())
+                 .flatMap(c -> {
+                     Integer channelId = vo.getId();
 
-                    // Handle removed models
-                    List<Mono<Void>> removeMonos = new ArrayList<>();
-                    for (String model : vo.getRemove()) {
-                        removeMonos.add(modelRepository.deleteByRequestModelAndChannelId(model, existingChannel.getId()));
-                    }
+                     Mono<Void> deleteModelsMono = modelRepository.deleteByChannelId(channelId);
 
-                    return Flux.concat(addMonos)
-                            .thenMany(Flux.fromIterable(removeMonos))
-                            .then(channelRepositories.save(existingChannel));
-                });
+                     String[] models = vo.getModels().split(",");
+                     List<Mono<Model>> addMonos = new ArrayList<>();
+                     for (String m : models) {
+                         Model model = new Model();
+                         model.setRequestModel(m);
+                         model.setRealModel(m);
+                         model.setChannelId(channelId);
+                         addMonos.add(modelRepository.save(model));
+                     }
+                     return deleteModelsMono.thenMany(Flux.concat(addMonos)).then(Mono.just(c));
+                 });
     }
 
 
@@ -119,4 +107,6 @@ public class ChannelServiceImpl implements ChannelService {
     public Mono<List<Channel>> findAll(){
         return channelRepositories.findAll().collectList();
     }
+
+
 }

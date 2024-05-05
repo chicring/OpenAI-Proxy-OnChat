@@ -12,7 +12,9 @@ import org.hibernate.validator.constraints.Length;
  **/
 
 @Data
-public class AddChannelVO {
+public class ChannelVO {
+    private Integer id;
+
     @Length(min = 2, max = 15, message = "名称应该在2-15个字符之间")
     @NotEmpty(message = "name不能为空")
     private String name;

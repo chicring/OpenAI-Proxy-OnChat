@@ -23,8 +23,6 @@ public class Channel {
     private String type;
     private String apiKey;
     private String baseUrl;
-
-    @JsonRawValue
     private String models;
     private String model;
     private Integer priority;

@@ -3,7 +3,7 @@ package com.hjong.OnChat.controller;
 import com.hjong.OnChat.entity.dto.Channel;
 import com.hjong.OnChat.entity.Result;
 import com.hjong.OnChat.entity.dto.Model;
-import com.hjong.OnChat.entity.vo.req.AddChannelVO;
+import com.hjong.OnChat.entity.vo.req.ChannelVO;
 import com.hjong.OnChat.entity.vo.req.UpdateChannelVO;
 import com.hjong.OnChat.filter.annotation.CheckRole;
 import com.hjong.OnChat.service.ChannelService;
@@ -41,7 +41,7 @@ public class ChannelController {
     }
 
     @PostMapping("/add")
-    public Mono<Result<Void>> addChannel(@Valid @RequestBody AddChannelVO vo) {
+    public Mono<Result<Void>> addChannel(@Valid @RequestBody ChannelVO vo) {
         return channelService.saveChannel(vo).thenReturn(Result.ok("添加成功"));
     }
 
@@ -51,7 +51,7 @@ public class ChannelController {
     }
 
     @PutMapping
-    public Mono<Result<Void>> updateChannel(@RequestBody UpdateChannelVO vo) {
+    public Mono<Result<Void>> updateChannel(@RequestBody ChannelVO vo) {
         return channelService.updateChannel(vo).thenReturn(Result.ok("更新成功"));
     }
 
