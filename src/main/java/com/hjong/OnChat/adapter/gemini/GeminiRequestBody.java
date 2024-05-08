@@ -7,6 +7,8 @@ import lombok.Data;
 import java.util.Collections;
 import java.util.List;
 
+import static com.hjong.OnChat.adapter.Helper.ReconstructMessage;
+
 /**
  * @author HJong
  * @version 1.0
@@ -73,7 +75,7 @@ public class GeminiRequestBody {
         generationConfig.setMaxOutputTokens(request.getMax_tokens());
         generationConfig.setStopSequences(List.of());
 
-        geminiRequestBody.setContents(Content.builder(request.getMessages()));
+        geminiRequestBody.setContents(Content.builder(ReconstructMessage(request.getMessages())));
 
         return geminiRequestBody;
     }

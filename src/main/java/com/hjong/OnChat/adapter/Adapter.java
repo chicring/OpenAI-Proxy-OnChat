@@ -50,7 +50,6 @@ public abstract class Adapter {
 
     public Flux<String> sendMessage(OpenAiRequestBody request, Channel channel, ServerWebExchange serverWebExchange){
 
-
         validateAndSetParameters(request);
 
         log.debug("请求类型：{},请求站点：{}",channel.getType(),channel.getBaseUrl());
@@ -58,29 +57,6 @@ public abstract class Adapter {
         //设置渠道选择的模型
         request.setModel(channel.getModel());
 
-        //Gemini
-        if (channel.getType().equals(ChannelType.GEMINI.getType())) {
-            List<OpenAiRequestBody.Message> originalMessages = request.getMessages();
-            List<OpenAiRequestBody.Message> messages = IntStream.range(0, originalMessages.size())
-                    .mapToObj(i -> {
-                        OpenAiRequestBody.Message message = originalMessages.get(i);
-                        if (message.getRole().equals(ChatRoleEnum.SYSTEM.getRole())) {
-                            OpenAiRequestBody.Message userMessage = message.builder(ChatRoleEnum.USER.getRole(), message.getContent());
-                            // 如果当前消息不是最后一个消息，那么添加一个新的助手消息
-                            if (i < originalMessages.size() - 1) {
-                                OpenAiRequestBody.Message assistantMessage = message.builder(ChatRoleEnum.ASSISTANT.getRole(), "好的");
-                                return Arrays.asList(userMessage, assistantMessage);
-                            } else {
-                                return Collections.singletonList(userMessage);
-                            }
-                        } else {
-                            return Collections.singletonList(message);
-                        }
-                    })
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
-            request.setMessages(messages);
-        }
 
         //选择是否启用流式响应
         return request.isStream() ?
@@ -101,4 +77,5 @@ public abstract class Adapter {
 //        }
 
     }
+
 }
