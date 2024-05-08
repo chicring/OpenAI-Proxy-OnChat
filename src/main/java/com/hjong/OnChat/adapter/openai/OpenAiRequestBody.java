@@ -3,7 +3,7 @@ package com.hjong.OnChat.adapter.openai;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * @author HJong
@@ -17,10 +17,23 @@ public class OpenAiRequestBody {
     @Data
     public static class Message{
         private String role;
-        private String content;
+        private String content; //String or Content
         private String name;
         private Object tool_calls;
         private String tool_call_id;
+
+        @Data
+        public static class Content{
+            private String type;
+            private String text;
+            private Image_url image_url;
+
+            @Data
+            public static class Image_url{
+                private String url;
+                private String detail;
+            }
+        }
 
         public Message builder(String role, String content){
             Message message = new Message();

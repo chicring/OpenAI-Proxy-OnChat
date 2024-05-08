@@ -2,8 +2,6 @@ package com.hjong.OnChat.adapter;
 
 import com.hjong.OnChat.adapter.openai.OpenAiRequestBody;
 import com.hjong.OnChat.entity.dto.Channel;
-import com.hjong.OnChat.entity.enums.ChannelType;
-import com.hjong.OnChat.entity.enums.ChatRoleEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,13 +9,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.hjong.OnChat.entity.enums.UrlEnums.getUrlByType;
+import static com.hjong.OnChat.adapter.UrlEnums.getUrlByType;
 
 /**
  * @author HJong

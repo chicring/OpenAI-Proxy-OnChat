@@ -1,4 +1,4 @@
-package com.hjong.OnChat.entity.enums;
+package com.hjong.OnChat.adapter;
 
 /**
  * @author HJong

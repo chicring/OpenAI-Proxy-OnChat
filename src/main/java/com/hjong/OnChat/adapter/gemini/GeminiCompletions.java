@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 
 import static com.hjong.OnChat.adapter.Consts.GEMINI;
 import static com.hjong.OnChat.entity.Consts.DONE;
-import static com.hjong.OnChat.entity.enums.UrlEnums.getUrlByType;
+import static com.hjong.OnChat.adapter.UrlEnums.getUrlByType;
 
 /**
  * @author HJong
