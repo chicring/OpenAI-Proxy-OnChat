@@ -2,17 +2,16 @@ create table IF NOT EXISTS Channel
 (
     id           int auto_increment
         primary key,
-    name         varchar(255)                 not null,
-    enabled      tinyint(1) default 1         not null,
-    type         varchar(255)                 not null,
-    api_key      varchar(255)                 not null,
-    base_url     varchar(255)                 not null,
-    models       longtext collate utf8mb4_bin not null
-        check (json_valid(`models`)),
-    priority     int        default 0         not null,
-    `usage`      int        default 0         null,
-    created_at   int                          not null,
-    enable_proxy tinyint(1) default 0         not null
+    name         varchar(255)                     not null,
+    enabled      tinyint(1) default 1             not null,
+    type         varchar(255)                     not null,
+    api_key      varchar(255)                     not null,
+    base_url     varchar(255)                     not null,
+    models       varchar(255) collate utf8mb4_bin not null,
+    priority     int        default 0             not null,
+    `usage`      int        default 0             null,
+    created_at   int                              not null,
+    enable_proxy tinyint(1) default 0             not null
 );
 
 create table IF NOT EXISTS User
